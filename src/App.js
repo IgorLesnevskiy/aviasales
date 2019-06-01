@@ -2,6 +2,10 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+// TODO priceConverter - приводит цену к локали; переводит цену из одно валюты в другую;
+// TODO не нормализовать данные, считаем, что они ок
+// TODO преобразование аднных под фильтр
+
 function App() {
   return (
     <div className="App">
