@@ -1,0 +1,38 @@
+.button {
+	height: 5.6rem;
+	max-width: 32rem;
+	padding: 1rem;
+	position: relative;
+	text-decoration: none;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: $border-radius;
+	background-color: #FF6D00;
+	box-shadow: #D64D08 0 1px 0 0, rgba(0, 0, 0, .1) 0 2px 1px 0;
+	transition: all 0.25s linear;
+
+	&__text {
+		text-align: center;
+		color: #fff;
+		font-size: 1.6rem;
+		line-height: 1.2;
+		max-height: calc(2 * 1.2 * 1em); // максимум две строчки, остальное скрывать
+		overflow: hidden;
+		font-weight: 500;
+	}
+
+	&:hover {
+		background-color: #FF8124;
+		box-shadow: #F7661D 0 1px 0 0, rgba(0, 0, 0, .1) 0 1px 5px 0;
+	}
+
+	&:active {
+		top: 1px;
+		left: 1px;
+	}
+
+	&--full {
+		width: 100%;
+	}
+}

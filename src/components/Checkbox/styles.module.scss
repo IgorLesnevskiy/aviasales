@@ -1,0 +1,37 @@
+.checkbox {
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+
+	&__box {
+		color: #2196F3;
+		width: 1.9rem;
+		height: 1.9rem;
+		border: 1px solid currentColor;
+		border-radius: 3px;
+		position: relative;
+		flex-shrink: 0;
+
+		input {
+			display: none;
+		}
+
+		input:checked + .checkbox__tick {
+			opacity: 1;
+		}
+	}
+
+	&__tick {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		font-size: 1rem;
+		color: currentColor;
+		opacity: 0;
+	}
+
+	&__label {
+		margin-left: 1.1rem;
+	}
+}

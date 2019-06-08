@@ -1,30 +1,34 @@
 import React from "react";
-import styled from 'styled-components';
+// import styled from 'styled-components';
 
 import FilterSection from "../FilterSection";
 
-const FilterElement = styled.div`
-	background: #fff;
-	padding: 1.5rem 0;
-`;
+import styles from './styles.module.scss';
 
-const Filter__section = styled.div`
-	& + & {
-		margin-top: 3rem;
-	}
-`;
+// const Filter = styled.div`
+// 	background: #fff;
+// 	padding: 1.5rem 0;
+// `;
+//
+// const Filter__section = styled.div`
+// 	& + & {
+// 		margin-top: 3rem;
+// 	}
+// `;
+
+// import styles from './styles.module.scss';
 
 class Filter extends React.Component {
 	render() {
 		return (
-			<FilterElement>
-				<Filter__section>
+			<div className={styles.filter}>
+				<div className={styles.filter__section}>
 					<FilterSection />
-				</Filter__section>
-				<Filter__section>
+				</div>
+				<div className={styles.filter__section}>
 					<FilterSection />
-				</Filter__section>
-			</FilterElement>
+				</div>
+			</div>
 		)
 	}
 }

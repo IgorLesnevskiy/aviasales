@@ -1,0 +1,4 @@
+@mixin styled-box($br: $border-radius, $sh: $shadow) {
+	border-radius: $br;
+	box-shadow: $sh;
+}

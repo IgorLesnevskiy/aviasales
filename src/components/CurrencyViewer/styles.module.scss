@@ -1,0 +1,25 @@
+.currency-viewer {
+	white-space: nowrap;
+
+	&:after {
+		font-weight: 400;
+	}
+
+	&[data-type="RUB"] {
+		&:after {
+			content: " ₽";
+		}
+	}
+
+	&[data-type="EUR"] {
+		&:after {
+			content: " €";
+		}
+	}
+
+	&[data-type="USD"] {
+		&:after {
+			content: " $";
+		}
+	}
+}

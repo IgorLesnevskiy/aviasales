@@ -1,0 +1,25 @@
+.currency-checker-tabs {
+	display: flex;
+
+	&__item {
+		flex-grow: 1;
+	}
+
+	&__item + &__item {
+		.currency-checker {
+			margin-left: -1px;
+		}
+
+		.currency-checker__label {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+	}
+
+	&__item:not(:last-child) {
+		.currency-checker__label {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+	}
+}
