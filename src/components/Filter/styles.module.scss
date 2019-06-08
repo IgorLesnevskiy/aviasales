@@ -1,0 +1,11 @@
+.filter {
+	//@include styled-box();
+	background: #fff;
+	padding: 1.5rem 0;
+
+	&__section {}
+
+	&__section + &__section {
+		margin-top: 3rem;
+	}
+}
