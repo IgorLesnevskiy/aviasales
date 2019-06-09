@@ -29,9 +29,7 @@ class Ticket extends React.Component {
 				<div className={styles["ticket__info-wrapper"]}>
 					<div className={styles["ticket__info-inner"]}>
 						<div className={styles["ticket__flight-date"]}>
-
-							<FlightDate />
-
+							<FlightDate direction = 'from' time = '11:45' city = 'Владивосток' cityCode = 'VVO' date = '12.05.18'/>
 						</div>
 
 						<div className={styles["ticket__transfer"]}>
@@ -41,9 +39,7 @@ class Ticket extends React.Component {
 						</div>
 
 						<div className={styles["ticket__flight-date"]}>
-
-							<FlightDate />
-
+							<FlightDate direction = 'to' time = '16:20' city = 'Тель-Авив' cityCode = 'TLV' date = '12.05.18'/>
 						</div>
 					</div>
 				</div>
