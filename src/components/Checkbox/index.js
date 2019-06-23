@@ -1,21 +1,40 @@
-import React from "react";
+import React, {useState} from "react";
+import {utils} from '../../tools';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import styles from './styles.module.scss';
+import styles from './styles.scss';
 
-class Checkbox extends React.Component {
-	render() {
-		return (
-			<label className={styles.checkbox}>
-				<div className={styles["checkbox__box"]}>
-					<input type={"checkbox"} id={"checkbox-1"} />
-					<FontAwesomeIcon icon={['fas', 'check']} className={styles["checkbox__tick"]}/>
-				</div>
-				<div className={styles["checkbox__label"]}>Все</div>
-			</label>
-		)
-	}
+function Checkbox(props) {
+	const {
+		id = null,
+		label,
+		name,
+		value,
+		isChecked = false,
+		onChange = Function.prototype
+	} = props;
+
+	const [uniqId] = useState(id || utils.getUniqId());
+
+	return (
+		<label className={"checkbox"}>
+			<div className={"checkbox__box"}>
+				<input type={"checkbox"}
+				       id={uniqId}
+				       name = {name}
+				       value = {value}
+				       onChange={onChange}
+				       checked={isChecked}
+				/>
+				<FontAwesomeIcon icon={['fas', 'check']} className={"checkbox__tick"}/>
+			</div>
+			{label
+				? <div className={"checkbox__label"}>{label}</div>
+				: null
+			}
+		</label>
+	)
 }
 
 export default Checkbox;

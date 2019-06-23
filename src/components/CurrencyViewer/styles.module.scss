@@ -12,14 +12,14 @@
 	}
 
 	&[data-type="EUR"] {
-		&:after {
-			content: " €";
+		&:before {
+			content: "€";
 		}
 	}
 
 	&[data-type="USD"] {
-		&:after {
-			content: " $";
+		&:before {
+			content: "$";
 		}
 	}
 }

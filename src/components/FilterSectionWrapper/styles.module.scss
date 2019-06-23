@@ -1,0 +1,18 @@
+.filter-section-wrapper {
+	padding: 0;
+	margin: 0;
+
+	&__title {
+		margin-bottom: 1.2rem;
+		text-transform: uppercase;
+		font-weight: 500;
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+	}
+
+	&__body {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+}

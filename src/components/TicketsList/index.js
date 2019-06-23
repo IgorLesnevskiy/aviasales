@@ -3,24 +3,22 @@ import Ticket from "../Ticket";
 
 import styles from './styles.module.scss';
 
-class TicketsList extends React.Component {
-	render() {
-		return (
-			<div className={styles["tickets-list"]}>
-				<div className={styles["tickets-list__item"]}>
-					<Ticket/>
-				</div>
+function TicketsList(props) {
+	const {
+		tickets = []
+	} = props;
 
-				<div className={styles["tickets-list__item"]}>
-					<Ticket/>
-				</div>
-
-				<div className={styles["tickets-list__item"]}>
-					<Ticket/>
-				</div>
-			</div>
-		)
-	}
+	return (
+		<div className={styles["tickets-list"]}>
+			{tickets.map((ticket, key) => {
+				return <React.Fragment key={key}>
+					<div className={styles["tickets-list__item"]}>
+						<Ticket {...ticket}/>
+					</div>
+				</React.Fragment>
+			})}
+		</div>
+	)
 }
 
 export default TicketsList;

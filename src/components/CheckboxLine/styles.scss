@@ -4,7 +4,8 @@
 	position: relative;
 	overflow: hidden;
 	transition: all 0.2s linear;
-	padding-right: 7.5rem;
+	padding-right: 1.6rem;
+	padding-left: 1.6rem;
 
 	&__checkbox {
 		padding: 0.8rem 1.6rem;
@@ -24,12 +25,10 @@
 	}
 
 	&__action-wrapper {
-		position: absolute;
 		opacity: 0;
 		transition: all 0.2s linear;
-		top: 50%;
-		right: 1.6rem;
-		transform: translateY(0%);
+		transform: translateY(50%);
+		padding-left: 1rem;
 		font-size: 1.1rem;
 	}
 
@@ -45,11 +44,7 @@
 
 		.checkbox-line__action-wrapper {
 			opacity: 1;
-			transform: translateY(-50%);
+			transform: translateY(0%);
 		}
-	}
-
-	&--simple {
-		padding-right: 0;
 	}
 }

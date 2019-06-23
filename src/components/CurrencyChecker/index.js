@@ -1,19 +1,35 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
+import {utils} from '../../tools';
 
 import styles from './styles.module.scss';
 
-class CurrencyChecker extends React.Component {
-	render() {
-		return (
-			<div className={styles["currency-checker"]}>
+function CurrencyChecker(props) {
+	const {
+		id,
+		value = '',
+		name = 'currency',
+		label = 'RUB',
+		isChecked = false,
+		onChange = Function.prototype
+	} = props;
 
-				<input type="radio" value="RUB" name="currency" id="currency-1"
-				       className={styles["currency-checker__input"]} defaultChecked={"true"}/>
+	const [uniqId] = useState(id || utils.getUniqId());
 
-				<label htmlFor="currency-1" className={styles["currency-checker__label"]}>RUB</label>
-			</div>
-		)
-	}
+	return (
+		<div className={styles["currency-checker"]}>
+			<input
+				type="radio"
+				value={value}
+				name={name}
+				id={uniqId}
+				className={styles["currency-checker__input"]}
+				checked={isChecked}
+				onChange = {onChange}
+			/>
+
+			<label htmlFor={uniqId} className={styles["currency-checker__label"]}>{label}</label>
+		</div>
+	)
 }
 
 export default CurrencyChecker;

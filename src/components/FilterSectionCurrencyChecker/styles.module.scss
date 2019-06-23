@@ -1,0 +1,12 @@
+.filter-currency-checker-list {
+	padding-right: 1.6rem;
+	padding-left: 1.6rem;
+
+	&__row {
+		padding: 0;
+	}
+
+	&__row + &__row {
+		margin-top: .8rem;
+	}
+}

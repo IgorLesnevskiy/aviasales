@@ -3,43 +3,27 @@ import CurrencyChecker from "../CurrencyChecker";
 
 import styles from './styles.module.scss';
 
-class CurrencyCheckerTabs extends React.Component {
-	render() {
-		return (
-			<div className={styles["currency-checker-tabs"]}>
-				<div className={styles["currency-checker-tabs__item"]}>
+// TODO вероятно нужно отказываться от css-модулей, т.к. сложно воздействовать на nested-элементы
 
-					<CurrencyChecker />
-					{/*<div className={"currency-checker"}>*/}
-						{/*<input type="radio" value="RUB" name="currency" id="currency-1"*/}
-						       {/*className={"currency-checker__input"} defaultChecked={"true"}/>*/}
-						{/*<label htmlFor="currency-1" className={"currency-checker__label"}>RUB</label>*/}
-					{/*</div>*/}
+function CurrencyCheckerTabs(props) {
+	const {
+		items = [],
+		onChange = Function.prototype
+	} = props;
 
-				</div>
-				<div className={styles["currency-checker-tabs__item"]}>
-					<CurrencyChecker />
-
-					{/*<div className={"currency-checker"}>*/}
-						{/*<input type="radio" value="USD" name="currency" id="currency-2"*/}
-						       {/*className={"currency-checker__input"} />*/}
-						{/*<label htmlFor="currency-2" className={"currency-checker__label"}>USD</label>*/}
-					{/*</div>*/}
-
-				</div>
-				<div className={styles["currency-checker-tabs__item"]}>
-					<CurrencyChecker />
-
-					{/*<div className={"currency-checker"}>*/}
-						{/*<input type="radio" value="EUR" name="currency" id="currency-3"*/}
-						       {/*className={"currency-checker__input"}/>*/}
-						{/*<label htmlFor="currency-3" className={"currency-checker__label"}>EUR</label>*/}
-					{/*</div>*/}
-
-				</div>
-			</div>
-		)
-	}
+	const listOfItems = items.map(item =>
+		<li className={styles["currency-checker-tabs__item"]} key={item.value}>
+			<CurrencyChecker
+				{...item}
+				onChange = {onChange}
+			/>
+		</li>
+	);
+	return (
+		<ul className={styles["currency-checker-tabs"]}>
+			{listOfItems}
+		</ul>
+	)
 }
 
 export default CurrencyCheckerTabs;

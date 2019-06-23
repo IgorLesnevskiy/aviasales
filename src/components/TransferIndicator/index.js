@@ -1,30 +1,35 @@
 import React from "react";
 import cn from "classnames";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import {utils} from '../../tools';
 
 import styles from "./styles.module.scss";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-class TransferIndicator extends React.Component {
-	render() {
-		return (
-			<div className={styles["transfer-indicator"]}>
-				<div className={styles["transfer-indicator__count"]}>1 пересадка</div>
+const stopsEndings = ['пересадка', 'пересадки', 'пересадок'];
 
-				<div className={cn([styles["transfer-indicator__decor"], styles["transfer-indicator__decor--to"]])}>
-					<div className={styles["transfer-indicator__decor-icon"]}>
-						<FontAwesomeIcon icon={['fas', 'plane']}/>
-					</div>
+function TransferIndicator(props) {
+	const {stopsCount = 0, direction = 'to'} = props;
+
+	const stopsString = stopsCount
+		? `${stopsCount} ${utils.getNounEnding(stopsCount, stopsEndings)}`
+		: '';
+
+	const decorClasses = cn([
+		styles["transfer-indicator__decor"],
+		direction === 'from' ? styles["transfer-indicator__decor--from"] : styles["transfer-indicator__decor--to"]
+	]);
+
+	return (
+		<div className={styles["transfer-indicator"]}>
+			<div className={styles["transfer-indicator__count"]}>{stopsString}</div>
+			<div className={decorClasses}>
+				<div className={styles["transfer-indicator__decor-icon"]}>
+					<FontAwesomeIcon icon={['fas', 'plane']}/>
 				</div>
-
-				<div className={cn([styles["transfer-indicator__decor"], styles["transfer-indicator__decor--from"]])}>
-					<div className={styles["transfer-indicator__decor-icon"]}>
-						<FontAwesomeIcon icon={['fas', 'plane']}/>
-					</div>
-				</div>
-
 			</div>
-		)
-	}
+		</div>
+	)
 }
 
 export default TransferIndicator;

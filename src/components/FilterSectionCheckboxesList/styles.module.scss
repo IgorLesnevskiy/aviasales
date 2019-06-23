@@ -1,0 +1,9 @@
+.filter-checkboxes-list {
+	&__row {
+		padding: 0;
+	}
+
+	&__row + &__row {
+		margin-top: .8rem;
+	}
+}

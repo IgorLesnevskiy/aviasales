@@ -4,49 +4,53 @@
 	display: inline-block;
 	line-height: 1;
 	text-align: center;
+}
 
-	&__count {
-		color: #8B9497;
-		font-weight: 500;
-		text-transform: uppercase;
+.transfer-indicator__count {
+	color: #8B9497;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+.transfer-indicator__decor {
+	color: #D2D5D6;
+	font-size: 1.4em;
+	position: relative;
+	text-align: right;
+
+	&:after {
+		content: '';
+		position: absolute;
+		width: calc(100% - 1.3em);
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		height: 1px;
+		background: currentColor;
 	}
+}
 
-	&__decor {
-		color: #D2D5D6;
-		font-size: 1.4em;
-		position: relative;
-		text-align: right;
+.transfer-indicator__decor-icon {
+	display: inline-block;
+}
 
-		&:after {
-			content: '';
-			position: absolute;
-			width: calc(100% - 1.3em);
-			left: 0;
-			top: 50%;
-			transform: translateY(-50%);
-			height: 1px;
-			background: currentColor;
-		}
+.transfer-indicator__decor--to {
+	text-align: right;
+}
+
+.transfer-indicator__decor--from {
+	text-align: left;
+
+	&:after {
+		left: auto;
+		right: 0;
 	}
+}
 
-	&__decor-icon {
-		display: inline-block;
-	}
+.transfer-indicator__decor--from .transfer-indicator__decor-icon {
+	transform: rotate(180deg);
+}
 
-	&__decor--from {
-		text-align: left;
-
-		&:after {
-			left: auto;
-			right: 0;
-		}
-	}
-
-	&__decor--from &__decor-icon {
-		transform: rotate(180deg);
-	}
-
-	&__count + &__decor {
-		margin-top: 0.2em;
-	}
+.transfer-indicator__count + .transfer-indicator__decor {
+	margin-top: 0.2em;
 }

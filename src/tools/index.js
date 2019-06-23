@@ -1,4 +1,9 @@
 import utils from './_utils.js';
-import getLocalization from './_localization.js';
+import carriers from './_carriers.js';
+import getPriceConverter from './priceConverter';
 
-export {utils, getLocalization};
+export {
+	utils,
+	carriers,
+	getPriceConverter
+};

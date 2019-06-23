@@ -1,9 +1,10 @@
 .tickets-list {
-	&__item {
 
-	}
+}
+.tickets-list__item {
 
-	&__item + &__item {
-		margin-top: 2rem;
-	}
+}
+
+.tickets-list__item + .tickets-list__item {
+	margin-top: 2rem;
 }
