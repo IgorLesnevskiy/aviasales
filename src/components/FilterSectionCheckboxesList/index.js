@@ -46,15 +46,19 @@ function FilterSectionCheckboxesList(props) {
 	};
 
 	useEffect(() => {
-		let state = {};
+		let newState = {};
 
 		data.forEach((rowData, key) => {
-			state[rowData.id] = {
+			newState[rowData.id] = {
 				...rowData
 			};
 		});
 
-		updateValues(state);
+		updateValues(newState);
+		onSectionUpdate({
+			type,
+			data: newState
+		});
 	}, []);
 
 
