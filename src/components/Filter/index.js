@@ -1,7 +1,6 @@
 import React, {useState} from "react";
-import {utils} from '../../tools';
-
 import FilterSectionWrapper from "../FilterSectionWrapper";
+import {utils} from '../../tools';
 
 import styles from './styles.module.scss';
 
@@ -18,14 +17,14 @@ function Filter(props) {
 					label: "RUB",
 					value: "RUB",
 					name: "currency",
-					isChecked: true,
+					isChecked: false,
 					id: utils.getUniqId(),
 				},
 				{
 					label: "USD",
 					value: "USD",
 					name: "currency",
-					isChecked: false,
+					isChecked: true,
 					id: utils.getUniqId(),
 				},
 				{
@@ -68,7 +67,7 @@ function Filter(props) {
 					name: "stops",
 					value: "2",
 					id: utils.getUniqId(),
-					isChecked: false,
+					isChecked: true,
 				},
 				{
 					label: "3 пересадки",
@@ -113,7 +112,7 @@ function Filter(props) {
 					...formData,
 					[name]: {
 						type,
-						value: checkedValues
+						value: checkedValues.length > 1 ? checkedValues : checkedValues.pop()
 					}
 				};
 
