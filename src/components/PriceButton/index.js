@@ -23,19 +23,28 @@ function PriceButton(props){
 	</div>;
 
 	const content = <div className={styles["button__text"]}>
-		Купить за <CurrencyViewer
-		currency={currency}
-		amount={convertedAmount}/>
+		Купить за <br/>
+		<CurrencyViewer
+			currency={currency}
+			amount={convertedAmount}
+		/>
 	</div>;
 
+
 	useEffect(() => {
+		let isSubscribed = true;
 		setLoadingStatus(true);
 
-		cPriceConverter.convertPrice(baseCurrency, currency, baseAmount).then((result) => {
-			setConvertedAmount(result);
-			setLoadingStatus(false);
-		});
-	}, [props.currency]);
+		cPriceConverter.convertPrice(baseCurrency, currency, baseAmount)
+			.then((result) => {
+				if (isSubscribed) {
+					setConvertedAmount(result);
+					setLoadingStatus(false);
+				}
+			});
+
+		return () => isSubscribed = false;
+	}, [baseCurrency, currency, baseAmount]);
 
 	return (
 		<a href={"#"} className={styles["button"]}>
