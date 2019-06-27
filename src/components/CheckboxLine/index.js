@@ -1,6 +1,6 @@
 import React from "react";
 
-import styles from './styles.scss';
+import './styles.scss'
 import Checkbox from "../Checkbox";
 
 function CheckboxLine(props) {

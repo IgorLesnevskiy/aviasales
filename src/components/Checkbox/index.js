@@ -3,7 +3,7 @@ import {utils} from '../../tools';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import styles from './styles.scss';
+import './styles.scss';
 
 function Checkbox(props) {
 	const {

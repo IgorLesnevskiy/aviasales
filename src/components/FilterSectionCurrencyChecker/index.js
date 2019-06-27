@@ -1,8 +1,6 @@
 import React, {useState, useEffect} from "react";
 import CurrencyCheckerTabs from '../CurrencyCheckerTabs';
 
-import cn from 'classnames';
-
 import styles from './styles.module.scss';
 
 function FilterSectionCurrencyChecker(props) {
@@ -50,7 +48,6 @@ function FilterSectionCurrencyChecker(props) {
 			data: newState
 		});
 	}, []);
-
 
 	let rows = [];
 	for (let rowKey in values) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useReducer, useEffect } from "react";
 
 import CurrencyViewer from '../CurrencyViewer';
 import {getPriceConverter} from "../../tools";
@@ -15,8 +15,10 @@ function PriceButton(props){
 		baseAmount = 0,
 	} = props;
 
-	const [isLoading, setLoadingStatus] = useState(true);
-	const [convertedAmount, setConvertedAmount] = useState(baseAmount);
+	const [state, updateState] = useReducer(
+		(state, newState) => ({...state, ...newState}),
+		{isLoading: true, convertedAmount: baseAmount}
+	);
 
 	const loader = <div className={styles["loading"]}>
 		<FontAwesomeIcon icon={['fas', 'spinner']}/>
@@ -26,20 +28,25 @@ function PriceButton(props){
 		Купить за <br/>
 		<CurrencyViewer
 			currency={currency}
-			amount={convertedAmount}
+			amount={state.convertedAmount}
 		/>
 	</div>;
 
 
 	useEffect(() => {
 		let isSubscribed = true;
-		setLoadingStatus(true);
+
+		updateState({
+			isLoading: true
+		});
 
 		cPriceConverter.convertPrice(baseCurrency, currency, baseAmount)
 			.then((result) => {
 				if (isSubscribed) {
-					setConvertedAmount(result);
-					setLoadingStatus(false);
+					updateState({
+						isLoading: false,
+						convertedAmount: result
+					});
 				}
 			});
 
@@ -48,7 +55,7 @@ function PriceButton(props){
 
 	return (
 		<a href={"#"} className={styles["button"]}>
-			{isLoading ? loader : content}
+			{state.isLoading ? loader : content}
 		</a>
 	)
 }

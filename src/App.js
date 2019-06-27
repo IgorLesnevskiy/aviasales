@@ -164,7 +164,6 @@ const defaultTicketsList = [{
 
 function App() {
   const [filteredTickets, setFilterTickets] = useState(defaultTicketsList);
-  const [filterParams, setFilterParams] = useState({});
 
   const onFilterUpdate = function(filterParams) {
     let filtered = [...defaultTicketsList];
@@ -202,12 +201,14 @@ function App() {
           });
 
           break;
+        default:
+          console.error('Unknown filter case');
+          break;
       }
     }
 
     console.log(filterParams);
     setFilterTickets(filtered);
-    setFilterParams(filterParams);
   };
 
   return (

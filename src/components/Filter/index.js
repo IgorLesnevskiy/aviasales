@@ -1,9 +1,7 @@
 import React, {useState} from "react";
-import FilterSectionWrapper from "../FilterSectionWrapper";
 import {utils} from '../../tools';
-
 import styles from './styles.module.scss';
-
+import FilterSectionWrapper from "../FilterSectionWrapper";
 
 function Filter(props) {
 	const [formData, setFormData] = useState({});
@@ -17,14 +15,14 @@ function Filter(props) {
 					label: "RUB",
 					value: "RUB",
 					name: "currency",
-					isChecked: false,
+					isChecked: true,
 					id: utils.getUniqId(),
 				},
 				{
 					label: "USD",
 					value: "USD",
 					name: "currency",
-					isChecked: true,
+					isChecked: false,
 					id: utils.getUniqId(),
 				},
 				{
@@ -67,7 +65,7 @@ function Filter(props) {
 					name: "stops",
 					value: "2",
 					id: utils.getUniqId(),
-					isChecked: true,
+					isChecked: false,
 				},
 				{
 					label: "3 пересадки",
@@ -119,6 +117,9 @@ function Filter(props) {
 				setFormData(result);
 				onFilterUpdate(result);
 
+				break;
+			default:
+				console.error('Unknown filter case');
 				break;
 		}
 	};
