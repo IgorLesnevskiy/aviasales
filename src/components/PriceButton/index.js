@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer, useEffect, useCallback } from "react";
 
 import CurrencyViewer from '../CurrencyViewer';
 import {getPriceConverter} from "../../tools";
@@ -20,6 +20,10 @@ function PriceButton(props){
 		{isLoading: true, convertedAmount: baseAmount}
 	);
 
+	const convertPrice = useCallback(() => {
+		return cPriceConverter.convertPrice(baseCurrency, currency, baseAmount)
+	}, [currency, baseCurrency, baseAmount]);
+
 	const loader = <div className={styles["loading"]}>
 		<FontAwesomeIcon icon={['fas', 'spinner']}/>
 	</div>;
@@ -32,15 +36,14 @@ function PriceButton(props){
 		/>
 	</div>;
 
-
 	useEffect(() => {
 		let isSubscribed = true;
 
 		updateState({
-			isLoading: true
+			isLoading: false
 		});
 
-		cPriceConverter.convertPrice(baseCurrency, currency, baseAmount)
+		convertPrice()
 			.then((result) => {
 				if (isSubscribed) {
 					updateState({
@@ -51,7 +54,7 @@ function PriceButton(props){
 			});
 
 		return () => isSubscribed = false;
-	}, [baseCurrency, currency, baseAmount]);
+	}, [convertPrice]);
 
 	return (
 		<a href={"#"} className={styles["button"]}>

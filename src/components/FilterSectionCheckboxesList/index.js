@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import CheckboxLine from '../CheckboxLine';
 
 import styles from './styles.module.scss';
@@ -11,7 +11,7 @@ function FilterSectionCheckboxesList(props) {
 	} = props;
 
 	const [values, updateValues] = useState({});
-	const onCheckboxesGroupChange = (e) => {
+	const onCheckboxesGroupChange = useCallback((e) => {
 		const trigger = e.currentTarget;
 		const id = trigger.id;
 		const value = trigger.value;
@@ -43,7 +43,7 @@ function FilterSectionCheckboxesList(props) {
 			type,
 			data: newState
 		});
-	};
+	},[values]);
 
 	useEffect(() => {
 		let newState = {};
@@ -59,7 +59,7 @@ function FilterSectionCheckboxesList(props) {
 			type,
 			data: newState
 		});
-	}, []);
+	}, [data, type]);
 
 
 	let rows = [];

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 
 import Filter from './components/Filter';
 import TicketsList from './components/TicketsList';
@@ -165,7 +165,7 @@ const defaultTicketsList = [{
 function App() {
   const [filteredTickets, setFilterTickets] = useState(defaultTicketsList);
 
-  const onFilterUpdate = function(filterParams) {
+  const onFilterUpdate = useCallback((filterParams) => {
     let filtered = [...defaultTicketsList];
 
     for (let paramKey in filterParams) {
@@ -181,6 +181,7 @@ function App() {
 
       switch (type) {
         case "currencyChecker":
+          debugger;
           filtered.forEach((ticket) => {
             ticket.priceCurrency = value;
           });
@@ -207,9 +208,10 @@ function App() {
       }
     }
 
-    console.log(filterParams);
+    console.log(filtered);
+
     setFilterTickets(filtered);
-  };
+  }, []);
 
   return (
     <div className={"page"}>

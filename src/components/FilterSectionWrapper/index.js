@@ -1,20 +1,11 @@
 import React, {useEffect, useReducer} from "react";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import Skeleton  from "react-loading-skeleton";
+import cn from "classnames";
+
 import FilterSectionCheckboxesList from "../FilterSectionCheckboxesList";
 import FilterSectionCurrencyChecker from "../FilterSectionCurrencyChecker";
 
 import './styles.scss';
-
-const loader = <SkeletonTheme>
-	<div className={"filter-section-wrapper"}>
-		<div className={"filter-section-wrapper__title"}>
-			<Skeleton/>
-		</div>
-		<div className={"filter-section-wrapper__body skeleton"}>
-			<Skeleton count={4}/>
-		</div>
-	</div>
-</SkeletonTheme>;
 
 function FilterSectionWrapper(props) {
 		const {
@@ -50,18 +41,14 @@ function FilterSectionWrapper(props) {
 			/>
 		}
 
-		const render = state.isLoading
-			? loader
-			: <div className={"filter-section-wrapper"}>
-				<div className={"filter-section-wrapper__title"}>{title}</div>
-					<div className={"filter-section-wrapper__body"}>
-						{innerItem}
-					</div>
-				</div>;
-
 		return (
 			<React.Fragment>
-				{render}
+				<div className={"filter-section-wrapper"}>
+					<div className={"filter-section-wrapper__title"}>{state.isLoading ? <Skeleton/> : title}</div>
+					<div className={cn("filter-section-wrapper__body", state.isLoading ? "skeleton" : null)}>
+						{state.isLoading ? <Skeleton count={4} /> : innerItem}
+					</div>
+				</div>
 			</React.Fragment>
 		)
 }

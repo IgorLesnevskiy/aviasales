@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import CurrencyCheckerTabs from '../CurrencyCheckerTabs';
 
 import styles from './styles.module.scss';
@@ -9,9 +9,9 @@ function FilterSectionCurrencyChecker(props) {
 		type = '',
 		onSectionUpdate = Function.prototype
 	} = props;
-	//
+
 	const [values, updateValues] = useState({});
-	const onCurrencyCheckerGroupChange = (e) => {
+	const onCurrencyCheckerGroupChange = useCallback((e) => {
 		const trigger = e.currentTarget;
 		const id = trigger.id;
 		let newState = {};
@@ -31,7 +31,7 @@ function FilterSectionCurrencyChecker(props) {
 			type,
 			data: newState
 		});
-	};
+	},[values]);
 
 	useEffect(() => {
 		let newState = {};
@@ -47,7 +47,7 @@ function FilterSectionCurrencyChecker(props) {
 			type,
 			data: newState
 		});
-	}, []);
+	}, [data, type]);
 
 	let rows = [];
 	for (let rowKey in values) {
