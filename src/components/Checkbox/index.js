@@ -15,7 +15,7 @@ function Checkbox(props) {
 		onChange = Function.prototype
 	} = props;
 
-	const [uniqId] = useState(id || utils.getUniqId());
+	const [uniqId] = useState(id || utils.getUniqueId());
 
 	return (
 		<label className={"checkbox"}>
