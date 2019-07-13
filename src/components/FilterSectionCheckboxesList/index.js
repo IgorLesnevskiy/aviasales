@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useReducer, useCallback} from "react";
 import CheckboxLine from '../CheckboxLine';
 
 import styles from './styles.module.scss';
@@ -10,57 +10,86 @@ function FilterSectionCheckboxesList(props) {
 		onSectionUpdate = Function.prototype
 	} = props;
 
-	const [values, updateValues] = useState({});
+	function reducer(state, action) {
+		let updatedState = state;
+
+		switch (action.type) {
+			case "checkAll":
+			{
+				const newState = {};
+				const isChecked = Boolean(action.payload.isChecked);
+
+				for (let rowKey in state) {
+					if (state.hasOwnProperty(rowKey)) {
+						newState[rowKey] = {
+							...state[rowKey],
+							isChecked
+						}
+					}
+				}
+
+				updatedState = {
+					...updatedState,
+					...newState
+				};
+			}
+
+				break;
+			case "checkItem":
+			{
+				const id = action.payload.id;
+				const isChecked = Boolean(action.payload.isChecked);
+
+				updatedState = {
+					...updatedState,
+					[id]: {
+						...state[id],
+						isChecked
+					}
+				}
+			}
+
+				break;
+			default:
+				console.error("Unknown dispatch case");
+				break;
+		}
+
+		onSectionUpdate({
+			type,
+			data: updatedState
+		});
+
+		return updatedState;
+	}
+
+	const [values, dispatch] = useReducer(
+		reducer,
+		data
+	);
+
 	const onCheckboxesGroupChange = useCallback((e) => {
 		const trigger = e.currentTarget;
 		const id = trigger.id;
 		const value = trigger.value;
-		let newState = {};
 
 		if (value === 'all') {
-			for (let rowKey in values) {
-				newState = {
-					...newState,
-					[rowKey]: {
-						...values[rowKey],
-						isChecked: trigger.checked
-					}
+			dispatch({
+				type: "checkAll",
+				payload: {
+					isChecked: trigger.checked,
 				}
-			}
+			});
 		} else {
-			newState = {
-				...values,
-				[id]: {
-					...values[id],
-					isChecked: trigger.checked
+			dispatch({
+				type: "checkItem",
+				payload: {
+					id,
+					isChecked: trigger.checked,
 				}
-			}
+			});
 		}
-
-		updateValues(newState);
-
-		onSectionUpdate({
-			type,
-			data: newState
-		});
-	},[values]);
-
-	useEffect(() => {
-		let newState = {};
-
-		data.forEach((rowData, key) => {
-			newState[rowData.id] = {
-				...rowData
-			};
-		});
-
-		updateValues(newState);
-		onSectionUpdate({
-			type,
-			data: newState
-		});
-	}, [data, type]);
-
+	},[]);
 
 	let rows = [];
 	for (let rowKey in values) {

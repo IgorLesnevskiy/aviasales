@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useCallback, useReducer} from "react";
 import CurrencyCheckerTabs from '../CurrencyCheckerTabs';
 
 import styles from './styles.module.scss';
@@ -10,44 +10,57 @@ function FilterSectionCurrencyChecker(props) {
 		onSectionUpdate = Function.prototype
 	} = props;
 
-	const [values, updateValues] = useState({});
+	function reducer(state, action) {
+		let updatedState = state;
+
+		switch (action.type) {
+			case "checkItem":
+				{
+					const id = action.payload.id;
+
+					for (let rowKey in state) {
+						if (state.hasOwnProperty(rowKey)) {
+							updatedState = {
+								...updatedState,
+								[rowKey]: {
+									...state[rowKey],
+									isChecked: rowKey === id
+								}
+							}
+						}
+					}
+				}
+
+				break;
+			default:
+				console.error("Unknown dispatch case");
+				break;
+		}
+
+		onSectionUpdate({
+			type,
+			data: updatedState
+		});
+
+		return updatedState;
+	}
+
+	const [values, dispatch] = useReducer(
+		reducer,
+		data
+	);
+
 	const onCurrencyCheckerGroupChange = useCallback((e) => {
 		const trigger = e.currentTarget;
 		const id = trigger.id;
-		let newState = {};
 
-		for (let rowKey in values) {
-			newState = {
-				...newState,
-				[rowKey]: {
-					...values[rowKey],
-					isChecked: rowKey === id
-				}
+		dispatch({
+			type: "checkItem",
+			payload: {
+				id,
 			}
-		}
-
-		updateValues(newState);
-		onSectionUpdate({
-			type,
-			data: newState
 		});
-	},[values]);
-
-	useEffect(() => {
-		let newState = {};
-
-		data.forEach((rowData, key) => {
-			newState[rowData.id] = {
-				...rowData
-			};
-		});
-
-		updateValues(newState);
-		onSectionUpdate({
-			type,
-			data: newState
-		});
-	}, [data, type]);
+	},[]);
 
 	let rows = [];
 	for (let rowKey in values) {

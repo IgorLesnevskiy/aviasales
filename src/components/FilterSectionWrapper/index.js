@@ -15,14 +15,28 @@ function FilterSectionWrapper(props) {
 			onSectionUpdate = Function.prototype
 		} = props;
 
-		const [state, updateState] = useReducer(
-			(state, newState) => ({...state, ...newState}),
+		const [state, dispatch] = useReducer(
+			(state, action) => {
+				switch (action.type) {
+					case "setLoadingStatus":
+						return {
+							...state,
+							isLoading: action.payload.isLoading
+						};
+					default:
+						console.error("Unknown dispatch case");
+						break;
+				}
+			},
 			{isLoading: true}
 		);
 
 		useEffect(() => {
-			updateState({
-				isLoading: false
+			dispatch({
+				type: "setLoadingStatus",
+				payload: {
+					isLoading: false
+				}
 			});
 		}, []);
 
