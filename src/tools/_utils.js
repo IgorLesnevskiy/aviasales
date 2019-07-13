@@ -67,7 +67,7 @@ function convertToLocalPrice(amount = 0, locale = 'RU', maximumFractionDigits = 
  * @param length
  * @returns {string}
  */
-function getUniqId(length = 10) {
+function getUniqueId(length = 10) {
 	let dt = new Date().getTime();
 
 	return 'x'.repeat(length).replace(/[x]/g, function() {
@@ -80,7 +80,7 @@ function getUniqId(length = 10) {
 export default {
 	convertToLocalPrice,
 	convertDate,
-	getUniqId,
+	getUniqueId,
 	getNounEnding
 };
 
