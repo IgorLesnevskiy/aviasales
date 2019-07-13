@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect, useReducer} from 'react';
 
 import Filter from './components/Filter';
 import TicketsList from './components/TicketsList';
@@ -9,161 +9,169 @@ import logo from "./resources/images/logo.svg";
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
+import {utils, CFilterBuilder} from "./tools";
 
 library.add(fas);
 
-// TODO priceConverter - приводит цену к локали; переводит цену из одно валюты в другую; https://fixer.io/documentation
+// TODO фильтрация билетов дефолтными значениями
 // TODO не нормализовать данные, считаем, что они ок
-// TODO преобразование аднных под фильтр
 // TODO генерация иконочного шрифта
 // TODO при фильтрации билетов видно дергание цены в кнопке цены. Кнопка не перерисовывается, в ней просто заменяется цена, и это видно
 // TODO preloader фильтра и данных
+// TODO фильтровать данные перед первым выводом
 // TODO разобраться почему стейт не собирается целиком в фильтре при загружке страницы
 
-const defaultTicketsList = [{
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "16:20",
-  "arrival_date": "12.05.18",
-  "arrival_time": "22:10",
-  "carrier": "TK",
-  "stops": 3,
-  "price": 12400,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}, {
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "17:20",
-  "arrival_date": "12.05.18",
-  "arrival_time": "23:50",
-  "carrier": "S7",
-  "stops": 1,
-  "price": 13100,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}, {
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "12:10",
-  "arrival_date": "12.05.18",
-  "arrival_time": "18:10",
-  "carrier": "SU",
-  "stops": 0,
-  "price": 15300,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}, {
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "17:00",
-  "arrival_date": "12.05.18",
-  "arrival_time": "23:30",
-  "carrier": "TK",
-  "stops": 2,
-  "price": 11000,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}, {
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "12:10",
-  "arrival_date": "12.05.18",
-  "arrival_time": "20:15",
-  "carrier": "BA",
-  "stops": 3,
-  "price": 13400,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}, {
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "9:40",
-  "arrival_date": "12.05.18",
-  "arrival_time": "19:25",
-  "carrier": "SU",
-  "stops": 3,
-  "price": 12450,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}, {
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "17:10",
-  "arrival_date": "12.05.18",
-  "arrival_time": "23:45",
-  "carrier": "TK",
-  "stops": 1,
-  "price": 13600,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}, {
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "6:10",
-  "arrival_date": "12.05.18",
-  "arrival_time": "15:25",
-  "carrier": "TK",
-  "stops": 0,
-  "price": 14250,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}, {
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "16:50",
-  "arrival_date": "12.05.18",
-  "arrival_time": "23:35",
-  "carrier": "SU",
-  "stops": 1,
-  "price": 16700,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}, {
-  "origin": "VVO",
-  "origin_name": "Владивосток",
-  "destination": "TLV",
-  "destination_name": "Тель-Авив",
-  "departure_date": "12.05.18",
-  "departure_time": "6:10",
-  "arrival_date": "12.05.18",
-  "arrival_time": "16:15",
-  "carrier": "S7",
-  "stops": 0,
-  "price": 17400,
-  "priceCurrency": "RUB",
-  "basePriceCurrency": "RUB",
-}];
+const defaultTicketsList = [
+    {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "16:20",
+    "arrival_date": "12.05.18",
+    "arrival_time": "22:10",
+    "carrier": "TK",
+    "stops": 3,
+    "price": 12400,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }, {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "17:20",
+    "arrival_date": "12.05.18",
+    "arrival_time": "23:50",
+    "carrier": "S7",
+    "stops": 1,
+    "price": 13100,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }, {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "12:10",
+    "arrival_date": "12.05.18",
+    "arrival_time": "18:10",
+    "carrier": "SU",
+    "stops": 0,
+    "price": 15300,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }, {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "17:00",
+    "arrival_date": "12.05.18",
+    "arrival_time": "23:30",
+    "carrier": "TK",
+    "stops": 2,
+    "price": 11000,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }, {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "12:10",
+    "arrival_date": "12.05.18",
+    "arrival_time": "20:15",
+    "carrier": "BA",
+    "stops": 3,
+    "price": 13400,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }, {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "9:40",
+    "arrival_date": "12.05.18",
+    "arrival_time": "19:25",
+    "carrier": "SU",
+    "stops": 3,
+    "price": 12450,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }, {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "17:10",
+    "arrival_date": "12.05.18",
+    "arrival_time": "23:45",
+    "carrier": "TK",
+    "stops": 1,
+    "price": 13600,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }, {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "6:10",
+    "arrival_date": "12.05.18",
+    "arrival_time": "15:25",
+    "carrier": "TK",
+    "stops": 0,
+    "price": 14250,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }, {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "16:50",
+    "arrival_date": "12.05.18",
+    "arrival_time": "23:35",
+    "carrier": "SU",
+    "stops": 1,
+    "price": 16700,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }, {
+    "origin": "VVO",
+    "origin_name": "Владивосток",
+    "destination": "TLV",
+    "destination_name": "Тель-Авив",
+    "departure_date": "12.05.18",
+    "departure_time": "6:10",
+    "arrival_date": "12.05.18",
+    "arrival_time": "16:15",
+    "carrier": "S7",
+    "stops": 0,
+    "price": 17400,
+    "priceCurrency": "RUB",
+    "basePriceCurrency": "RUB",
+  }
+];
+
+const cFilterBuilder = new CFilterBuilder();
+
+const filtersData = cFilterBuilder.buildFilter(defaultTicketsList);
 
 function App() {
   const [filteredTickets, setFilterTickets] = useState(defaultTicketsList);
+  const [isLoading, setLoadingStatus] = useState(true);
 
   const onFilterUpdate = useCallback((filterParams) => {
     let filtered = [...defaultTicketsList];
@@ -181,7 +189,6 @@ function App() {
 
       switch (type) {
         case "currencyChecker":
-          debugger;
           filtered.forEach((ticket) => {
             ticket.priceCurrency = value;
           });
@@ -189,9 +196,10 @@ function App() {
           break;
         case "checkboxesList":
           filtered = filtered.filter((ticket) => {
-            if (!value || !value.length) {
+            if (!value || (Array.isArray(value) && !value.length)) {
               return true;
             }
+
             if (typeof ticket[paramKey] === "undefined") {
               return true;
             }
@@ -208,9 +216,11 @@ function App() {
       }
     }
 
-    console.log(filtered);
-
     setFilterTickets(filtered);
+  }, []);
+
+  useEffect(() => {
+  	setLoadingStatus(false);
   }, []);
 
   return (
@@ -225,11 +235,14 @@ function App() {
           <div className={"layout"}>
 
             <div className={"layout__sidebar"}>
-              <Filter onFilterUpdate={onFilterUpdate}/>
+              <Filter onFilterUpdate={onFilterUpdate} data={filtersData}/>
             </div>
 
             <div className={"layout__body"}>
-              <TicketsList tickets = {filteredTickets}/>
+              <TicketsList
+	              tickets = {filteredTickets}
+	              isLoading={isLoading}
+              />
             </div>
 
           </div>
