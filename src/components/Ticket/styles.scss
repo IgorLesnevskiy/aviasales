@@ -48,7 +48,8 @@
 	}
 
 	&__flight-date {
-		position: static;
+		min-width: 11rem;
+		//width: 40%;
 	}
 
 	&__transfer {

@@ -3,13 +3,13 @@ import React from "react";
 import FlightDate from "../FlightDate";
 import TransferIndicator from "../TransferIndicator";
 import PriceButton from "../PriceButton";
+import CarrierLogo from "../CarrierLogo";
 
-import {carriers} from '../../tools';
-
-import styles from './styles.module.scss';
+import './styles.scss';
 
 function Ticket(props) {
 	const {
+		isLoading = false,
 		origin,
 		origin_name,
 		destination,
@@ -30,7 +30,8 @@ function Ticket(props) {
 		date: departure_date,
 		time: departure_time,
 		cityCode: origin,
-		city: origin_name
+		city: origin_name,
+		isLoading
 	};
 
 	const flightToParams = {
@@ -38,52 +39,51 @@ function Ticket(props) {
 		date: arrival_date,
 		time: arrival_time,
 		cityCode: destination,
-		city: destination_name
+		city: destination_name,
+		isLoading
 	};
 
 	const transferParams = {
-		stopsCount: stops
+		stopsCount: stops,
+		isLoading
 	};
 
 	const priceButtonParams = {
 		currency: priceCurrency,
 		baseAmount: price,
 		baseCurrency: basePriceCurrency,
+		isLoading
 	};
 
-	const carrierInfo = carriers.getCarrier(carrier);
-	const carrierMarkup = !carrierInfo
-		? null
-		: <React.Fragment>
-			<div className={styles["ticket__company-logo"]}>
-				<a href={carrierInfo.site} target={"_blank"}>
-					<img src={carrierInfo.logo} alt={carrierInfo.fullName} title={carrierInfo.fullName}/>
-				</a>
-			</div>
-		</React.Fragment>;
+	const carrierLogoParams = {
+		carrier,
+		isLoading
+	};
 
 	return (
-		<div className={styles.ticket}>
-			<div className={styles["ticket__action-wrapper"]}>
-				<div className={styles["ticket__action-inner"]}>
-					{carrierMarkup}
+		<div className={"ticket"}>
+			<div className={"ticket__action-wrapper"}>
+				<div className={"ticket__action-inner"}>
+					<div className={"ticket__company-logo"}>
+						<CarrierLogo {...carrierLogoParams}/>
+					</div>
 
-					<div className={styles["ticket__action-button"]}>
-						<PriceButton {...priceButtonParams}/>
+					<div className={"ticket__action-button"}>
+						 <PriceButton {...priceButtonParams}/>
 					</div>
 				</div>
 			</div>
-			<div className={styles["ticket__info-wrapper"]}>
-				<div className={styles["ticket__info-inner"]}>
-					<div className={styles["ticket__flight-date"]}>
+			<div className={"ticket__info-wrapper"}>
+				<div className={"ticket__info-inner"}>
+					<div className={"ticket__flight-date"}>
 						<FlightDate {...flightFromParams} />
 					</div>
 
-					<div className={styles["ticket__transfer"]}>
+					<div className={"ticket__transfer"}>
 						<TransferIndicator {...transferParams} />
 					</div>
 
-					<div className={styles["ticket__flight-date"]}>
+					<div className={"ticket__flight-date"}>
 						<FlightDate {...flightToParams} />
 					</div>
 				</div>

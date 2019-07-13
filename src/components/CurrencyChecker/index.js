@@ -13,7 +13,7 @@ function CurrencyChecker(props) {
 		onChange = Function.prototype
 	} = props;
 
-	const [uniqId] = useState(id || utils.getUniqId());
+	const [uniqId] = useState(id || utils.getUniqueId());
 
 	return (
 		<div className={styles["currency-checker"]}>
