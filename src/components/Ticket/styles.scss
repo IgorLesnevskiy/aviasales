@@ -30,6 +30,8 @@
 
 	&__company-logo {
 		margin-bottom: 2rem;
+		width: 100%;
+		text-align: center;
 	}
 
 	&__info-wrapper {
@@ -46,7 +48,7 @@
 	}
 
 	&__flight-date {
-
+		position: static;
 	}
 
 	&__transfer {
