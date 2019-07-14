@@ -72,7 +72,7 @@ function FilterSectionCurrencyChecker(props) {
 			<div className={styles["filter-currency-checker-list__row"]}>
 				<CurrencyCheckerTabs
 					items={rows}
-					onChange={onCurrencyCheckerGroupChange}
+					// onChange={onCurrencyCheckerGroupChange}
 				/>
 			</div>
 		</div>

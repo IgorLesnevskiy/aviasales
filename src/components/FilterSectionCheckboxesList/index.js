@@ -97,7 +97,7 @@ function FilterSectionCheckboxesList(props) {
 			<div className={styles["filter-checkboxes-list__row"]} key={rowKey}>
 				<CheckboxLine
 					{...values[rowKey]}
-					onChange = {onCheckboxesGroupChange}
+					// onChange = {onCheckboxesGroupChange}
 				/>
 			</div>
 		)
