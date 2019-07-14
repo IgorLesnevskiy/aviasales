@@ -1,5 +1,6 @@
 import CCurrencyCheckerBuilder from "./_currencyCheckerBuilder.js";
 import CCheckboxesListBuilder from "./_checkboxesListBuilder.js";
+import {utils} from "../index";
 
 const titlesMap = {
 	stops: "Количество пересадок",
@@ -32,6 +33,18 @@ const availableCurrencies = [
 	}
 ];
 
+// генерация меток для типов полей
+const labelsGeneratorMap = {
+	stops: (value) => {
+		const stopsEndings = ['пересадка', 'пересадки', 'пересадок'];
+
+		return value === 0
+			? "Без пересадок"
+			: `${value} ${utils.getNounEnding(value, stopsEndings)}`;
+	},
+	priceCurrency: (value) => value,
+};
+
 /**
  * Конструктор фильтра
  *
@@ -44,12 +57,14 @@ class CFilterBuilder {
 			strategies = [
 				new CCheckboxesListBuilder({
 					titlesMap,
-					targetFields: targetFields.checkboxesList
+					targetFields: targetFields.checkboxesList,
+					labelGenerator: labelsGeneratorMap,
 				}),
 				new CCurrencyCheckerBuilder({
 					titlesMap,
 					targetFields: targetFields.currencyChecker,
-					currencies: availableCurrencies
+					currencies: availableCurrencies,
+					labelGenerator: labelsGeneratorMap,
 				}),
 			],
 		} = params;
@@ -60,17 +75,23 @@ class CFilterBuilder {
 	/**
 	 * Генерация фильтра
 	 * @param data - билеты для обработки
-	 * @returns {Array}
+	 * @returns {{defaultFiltersValues: Array, filtersData: Array}}
 	 */
 	buildFilter(data = []) {
+		const result = {
+			filtersData: [],
+			defaultFiltersValues: [],
+		};
+
 		if (!data || !data.length) {
-			return [];
+			return result;
 		}
 
-		const result = [];
-
 		this.strategies.forEach((strategy) => {
-			result.push(...strategy.processData(data));
+			const {filtersData, defaultFiltersValues} = strategy.processData(data);
+
+			result.filtersData.push(...filtersData);
+			result.defaultFiltersValues.push(...defaultFiltersValues);
 		});
 
 		return result;

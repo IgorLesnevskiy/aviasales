@@ -1,35 +1,37 @@
 import {utils} from "../index";
 
-//TODO вынести на уровень зависимости
-const labelGeneratorMap = {
-	stops: (value) => {
-		const stopsEndings = ['пересадка', 'пересадки', 'пересадок'];
-
-		return value === 0
-			? "Без пересадок"
-			: `${value} ${utils.getNounEnding(value, stopsEndings)}`;
-	}
-};
-
+/**
+ * Конструктор типа фильтра "Список чекбоксов"
+ */
 class CCheckboxesListBuilder {
 	static TYPE = "checkboxesList";
 
 	constructor(params = {}) {
 		const {
 			targetFields = [],
-			titlesMap = {}
+			titlesMap = {},
+			labelGenerator = {}
 		} = params;
 
 		this.targetFields = targetFields;
 		this.titlesMap = titlesMap;
+		this.labelGenerator = labelGenerator;
 	}
 
+	/**
+	 * Обработка и генерация данных
+	 * @param data
+	 * @returns {{defaultFiltersValues: Array, filtersData: Array}}
+	 */
 	processData(data = []) {
-		if (!data || !data.length) {
-			return [];
-		}
+		const result = {
+			filtersData: [],
+			defaultFiltersValues: [],
+		};
 
-		let result = [];
+		if (!data || !data.length) {
+			return result;
+		}
 
 		this.targetFields.forEach((targetField) => {
 			const isFieldExists = data.some((item) => typeof item[targetField] !== 'undefined');
@@ -54,28 +56,57 @@ class CCheckboxesListBuilder {
 						}
 					}, {});
 
-				result.push({
+				const mergedValues = {
+					...this._getCommonItem({
+						name: targetField
+					}),
+					...values,
+				};
+
+				result.filtersData.push({
 					title: this.titlesMap[targetField] || "",
 					type: this.constructor.TYPE,
-					data: {
-						...this._getCommonItem({
-							name: targetField
-						}),
-						...values,
-					}
-				})
+					code: targetField,
+					data: mergedValues
+				});
+
+				result.defaultFiltersValues.push({
+					code: targetField,
+					type: this.constructor.TYPE,
+					value: this._getDefaultValue(mergedValues) || []
+				});
 			}
 		});
 
 		return result;
 	}
 
+	_getDefaultValue(data = {}) {
+		return Object.entries(data)
+			.filter((item) => item[1].isChecked)
+			.map((item) => item[1].value)
+	}
+
+	/**
+	 * Генерация лейбла
+	 * @param type
+	 * @param value
+	 * @returns {*}
+	 * @private
+	 */
 	_getLabelForItem(type = '', value) {
-		if (labelGeneratorMap[type]) {
-			return labelGeneratorMap[type](value);
+		if (this.labelGenerator && this.labelGenerator[type]) {
+			return this.labelGenerator[type](value);
+		} else {
+			return value;
 		}
 	}
 
+	/**
+	 * Получить общий чекбокс "Все"
+	 * @param params
+	 * @private
+	 */
 	_getCommonItem(params = {}) {
 		const result = {};
 		const uniqueId = utils.getUniqueId();

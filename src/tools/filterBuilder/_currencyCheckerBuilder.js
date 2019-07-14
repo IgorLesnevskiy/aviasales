@@ -1,5 +1,8 @@
 import {utils} from "../index";
 
+/**
+ * Конструктор типа фильтра "Выбор валюты"
+ */
 class CCurrencyCheckerBuilder {
 	static TYPE = "currencyChecker";
 
@@ -7,6 +10,7 @@ class CCurrencyCheckerBuilder {
 		const {
 			targetFields = [],
 			titlesMap = {},
+			labelGenerator = {},
 			currencies = [{
 				title: 'RUB',
 				isDefault: true,
@@ -16,29 +20,36 @@ class CCurrencyCheckerBuilder {
 		this.targetFields = targetFields;
 		this.titlesMap = titlesMap;
 		this.currencies = currencies;
+		this.labelGenerator = labelGenerator;
 	}
 
+	/**
+	 * Обработка и генерация данных
+	 * @param data
+	 * @returns {{defaultFiltersValues: Array, filtersData: Array}}
+	 */
 	processData(data = []) {
-		if (!data || !data.length) {
-			return [];
-		}
+		const result = {
+			filtersData: [],
+			defaultFiltersValues: [],
+		};
 
-		let result = [];
+		if (!data || !data.length) {
+			return result;
+		}
 
 		this.targetFields.forEach((targetField) => {
 			const isFieldExists = data.some((item) => typeof item[targetField] !== 'undefined');
 
 			if (isFieldExists) {
 				const values = this.currencies
-					// .map((item) => item[targetField])
-					// .filter((value, index, self) => typeof value !== 'undefined' && self.indexOf(value) === index)
 					.reduce((acc, value) => {
 						const id = utils.getUniqueId();
 
 						return {
 							...acc,
 							[id]: {
-								label: value.title,
+								label: this._getLabelForItem(targetField, value.title),
 								value: value.title,
 								name: targetField,
 								id,
@@ -47,15 +58,43 @@ class CCurrencyCheckerBuilder {
 						}
 					}, {});
 
-				result.push({
+				result.filtersData.push({
 					title: this.titlesMap[targetField] || "",
 					type: this.constructor.TYPE,
+					code: targetField,
 					data: values
-				})
+				});
+
+				result.defaultFiltersValues.push({
+					code: targetField,
+					type: this.constructor.TYPE,
+					value: this._getDefaultValue(values) || []
+				});
 			}
 		});
 
 		return result;
+	}
+
+	_getDefaultValue(data = {}) {
+		return Object.entries(data)
+			.filter((item) => item[1].isChecked)
+			.map((item) => item[1].value)
+	}
+
+	/**
+	 * Генерация лейбла
+	 * @param type
+	 * @param value
+	 * @returns {*}
+	 * @private
+	 */
+	_getLabelForItem(type = '', value) {
+		if (this.labelGenerator && this.labelGenerator[type]) {
+			return this.labelGenerator[type](value);
+		} else {
+			return value;
+		}
 	}
 }
 
