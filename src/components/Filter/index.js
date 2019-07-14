@@ -2,86 +2,6 @@ import React, {useCallback, useReducer} from "react";
 import styles from './styles.module.scss';
 import FilterSectionWrapper from "../FilterSectionWrapper";
 
-// const data = [
-// 	{
-// 		title: "Валюта",
-// 		type: "currencyChecker",
-// 		data: [
-// 			{
-// 				label: "RUB",
-// 				value: "RUB",
-// 				name: "currency",
-// 				isChecked: false,
-// 				// id: utils.getUniqueId(),
-// 				id: "unique1",
-// 			},
-// 			{
-// 				label: "USD",
-// 				value: "USD",
-// 				name: "currency",
-// 				isChecked: false,
-// 				// id: utils.getUniqueId(),
-// 				id: "unique2",
-// 			},
-// 			{
-// 				label: "EUR",
-// 				value: "EUR",
-// 				name: "currency",
-// 				isChecked: true,
-// 				// id: utils.getUniqueId(),
-// 				id: "unique3",
-// 			},
-// 		]
-// 	},
-// 	{
-// 		title: "Количество пересадок",
-// 		type: "checkboxesList",
-// 		data: [
-// 			{
-// 				only: false,
-// 				name: "stops",
-// 				value: "all",
-// 				label: "Все",
-// 				// id: utils.getUniqueId(),
-// 				id: "unique4",
-// 				isChecked: false,
-// 			},
-// 			{
-// 				label: "Без пересадок",
-// 				name: "stops",
-// 				value: "0",
-// 				// id: utils.getUniqueId(),
-// 				id: "unique5",
-// 				isChecked: false,
-// 			},
-// 			{
-// 				label: "1 пересадка",
-// 				name: "stops",
-// 				value: "1",
-// 				// id: utils.getUniqueId(),
-// 				id: "unique6",
-// 				isChecked: true,
-// 			},
-// 			{
-// 				label: "2 пересадки",
-// 				name: "stops",
-// 				value: "2",
-// 				// id: utils.getUniqueId(),
-// 				id: "unique7",
-// 				isChecked: false,
-// 			},
-// 			{
-// 				label: "3 пересадки",
-// 				name: "stops",
-// 				value: "3",
-// 				// id: utils.getUniqueId(),
-// 				id: "unique8",
-// 				isChecked: false,
-// 			}
-// 		]
-// 	},
-// ];
-
 function Filter(props) {
 	const {
 		onFilterUpdate = Function.prototype,
@@ -148,7 +68,10 @@ function Filter(props) {
 	const sections = data.map((sectionData, key) => {
 		return <React.Fragment key={key}>
 			<div className={styles.filter__section}>
-				<FilterSectionWrapper {...sectionData}  onSectionUpdate={onSectionUpdate}/>
+				<FilterSectionWrapper
+					{...sectionData}
+					// onSectionUpdate={onSectionUpdate}
+				/>
 			</div>
 		</React.Fragment>
 	});
