@@ -3,7 +3,6 @@ import su from '../resources/images/carriers/su.png';
 import ba from '../resources/images/carriers/ba.png';
 import s7 from '../resources/images/carriers/s7.png';
 
-
 const carriers = {
 	TK: {
 		fullName: "Turkish Airlines",
