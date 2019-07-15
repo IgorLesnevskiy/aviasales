@@ -13,13 +13,10 @@ import {utils, CFilterBuilder} from "./tools";
 
 library.add(fas);
 
-// TODO фильтрация билетов дефолтными значениями
 // TODO не нормализовать данные, считаем, что они ок
 // TODO генерация иконочного шрифта
 // TODO при фильтрации билетов видно дергание цены в кнопке цены. Кнопка не перерисовывается, в ней просто заменяется цена, и это видно
 // TODO preloader фильтра и данных
-// TODO фильтровать данные перед первым выводом
-// TODO разобраться почему стейт не собирается целиком в фильтре при загружке страницы
 
 const defaultTicketsList = [
 	{
@@ -175,48 +172,56 @@ function App() {
 	const filteredTickets = useMemo((ticketsList = defaultTicketsList) => {
 		let filtered = [...ticketsList];
 
-		filterParams.forEach((param) => {
-			const {
-				code,
-				type,
-				value,
-			} = param;
+		for (let paramName in filterParams) {
+			if (filterParams.hasOwnProperty(paramName)) {
+				const param = filterParams[paramName];
+				const {
+					code,
+					type,
+					value,
+				} = param;
 
-			switch (type) {
-				case "currencyChecker":
-					filtered.forEach((ticket) => {
-						if (ticket[code]) {
-							ticket[code] = value;
-						}
-					});
+				switch (type) {
+					case "currencyChecker":
+						filtered.forEach((ticket) => {
+							if (ticket[code]) {
+								ticket[code] = value;
+							}
+						});
 
-					break;
-				case "checkboxesList":
-					filtered = filtered.filter((ticket) => {
-						if (!value || (Array.isArray(value) && !value.length)) {
-							return true;
-						}
+						break;
+					case "checkboxesList":
+						filtered = filtered.filter((ticket) => {
+							if (!value || (Array.isArray(value) && !value.length)) {
+								return true;
+							}
 
-						if (typeof ticket[code] === "undefined") {
-							return true;
-						}
+							if (typeof ticket[code] === "undefined") {
+								return true;
+							}
 
-						return (Array.isArray(value))
-							? value.some(i => String(i) === String(ticket[code]))
-							: String(value) === String(ticket[code]);
-					});
+							return (Array.isArray(value))
+								? value.some(i => String(i) === String(ticket[code]))
+								: String(value) === String(ticket[code]);
+						});
 
-					break;
-				default:
-					console.error('Unknown filter case');
+						break;
+					default:
+						console.error('Unknown filter case');
+				}
 			}
-		});
+		}
 
 		return filtered;
 	}, [filterParams]);
 
 	const onFilterUpdate = useCallback((filterParams) => {
-		setFilterParams(filterParams);
+		setFilterParams((oldState) => {
+			return {
+				...oldState,
+				...filterParams
+			}
+		});
 	}, []);
 
 	useEffect(() => {

@@ -39,6 +39,7 @@ function FilterSectionCurrencyChecker(props) {
 
 		onSectionUpdate({
 			type,
+			code: action.payload.name,
 			data: updatedState
 		});
 
@@ -50,14 +51,18 @@ function FilterSectionCurrencyChecker(props) {
 		data
 	);
 
+
 	const onCurrencyCheckerGroupChange = useCallback((e) => {
 		const trigger = e.currentTarget;
+
 		const id = trigger.id;
+		const name = trigger.name;
 
 		dispatch({
 			type: "checkItem",
 			payload: {
 				id,
+				name
 			}
 		});
 	},[]);
@@ -72,7 +77,7 @@ function FilterSectionCurrencyChecker(props) {
 			<div className={styles["filter-currency-checker-list__row"]}>
 				<CurrencyCheckerTabs
 					items={rows}
-					// onChange={onCurrencyCheckerGroupChange}
+					onChange={onCurrencyCheckerGroupChange}
 				/>
 			</div>
 		</div>

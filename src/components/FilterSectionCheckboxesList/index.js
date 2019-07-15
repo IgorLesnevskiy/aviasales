@@ -57,6 +57,7 @@ function FilterSectionCheckboxesList(props) {
 
 		onSectionUpdate({
 			type,
+			code: action.payload.name,
 			data: updatedState
 		});
 
@@ -70,14 +71,18 @@ function FilterSectionCheckboxesList(props) {
 
 	const onCheckboxesGroupChange = useCallback((e) => {
 		const trigger = e.currentTarget;
+
 		const id = trigger.id;
+		const name = trigger.name;
 		const value = trigger.value;
+		const isChecked = trigger.checked;
 
 		if (value === 'all') {
 			dispatch({
 				type: "checkAll",
 				payload: {
-					isChecked: trigger.checked,
+					name,
+					isChecked,
 				}
 			});
 		} else {
@@ -85,7 +90,9 @@ function FilterSectionCheckboxesList(props) {
 				type: "checkItem",
 				payload: {
 					id,
-					isChecked: trigger.checked,
+					name,
+					value,
+					isChecked,
 				}
 			});
 		}
@@ -97,7 +104,7 @@ function FilterSectionCheckboxesList(props) {
 			<div className={styles["filter-checkboxes-list__row"]} key={rowKey}>
 				<CheckboxLine
 					{...values[rowKey]}
-					// onChange = {onCheckboxesGroupChange}
+					onChange = {onCheckboxesGroupChange}
 				/>
 			</div>
 		)

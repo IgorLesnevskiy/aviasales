@@ -5,7 +5,7 @@ import FilterSectionWrapper from "../FilterSectionWrapper";
 function Filter(props) {
 	const {
 		onFilterUpdate = Function.prototype,
-		data = []
+		data = {}
 	} = props;
 
 	const [formData, dispatch] = useReducer((state, action) => {
@@ -29,31 +29,28 @@ function Filter(props) {
 	const onSectionUpdate = useCallback(sectionData => {
 		const {
 			type,
+			code,
 			data
 		} = sectionData;
 
-		if (!type || !data || !Object.keys(data).length) {
+		if (!type || !code || !data || !Object.keys(data).length) {
 			return false;
 		}
 
 		switch (type) {
 			case 'checkboxesList':
 			case 'currencyChecker':
-				const name = Object.values(data)[0].name || '';
 				const checkedValues = Object.values(data)
 					.filter(i => i.isChecked && i.value !== 'all')
 					.map(i => i.value);
 
-				if (!name) {
-					return false;
-				}
-
 				dispatch({
 					type: "update",
 					data: {
-						[name]: {
+						[code]: {
 							type,
-							value: checkedValues.length > 1 ? checkedValues : checkedValues.pop()
+							code,
+							value: checkedValues
 						}
 					}
 				});
@@ -65,16 +62,23 @@ function Filter(props) {
 		}
 	}, [onFilterUpdate]);
 
-	const sections = data.map((sectionData, key) => {
-		return <React.Fragment key={key}>
-			<div className={styles.filter__section}>
-				<FilterSectionWrapper
-					{...sectionData}
-					// onSectionUpdate={onSectionUpdate}
-				/>
-			</div>
-		</React.Fragment>
-	});
+	const sections = [];
+	for (let paramName in data) {
+		if (data.hasOwnProperty(paramName)) {
+			const sectionData = data[paramName];
+
+			sections.push(
+				<React.Fragment key={paramName}>
+					<div className={styles.filter__section}>
+						<FilterSectionWrapper
+							{...sectionData}
+							onSectionUpdate={onSectionUpdate}
+						/>
+					</div>
+				</React.Fragment>
+			)
+		}
+	}
 
 	return (
 		<form className={styles.filter}>

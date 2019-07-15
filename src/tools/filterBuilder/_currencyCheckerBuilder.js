@@ -26,12 +26,12 @@ class CCurrencyCheckerBuilder {
 	/**
 	 * Обработка и генерация данных
 	 * @param data
-	 * @returns {{defaultFiltersValues: Array, filtersData: Array}}
+	 * @returns {{defaultFiltersValues: {}, filtersData: {}}}
 	 */
 	processData(data = []) {
 		const result = {
-			filtersData: [],
-			defaultFiltersValues: [],
+			filtersData: {},
+			defaultFiltersValues: {},
 		};
 
 		if (!data || !data.length) {
@@ -58,18 +58,18 @@ class CCurrencyCheckerBuilder {
 						}
 					}, {});
 
-				result.filtersData.push({
+				result.filtersData[targetField] = {
 					title: this.titlesMap[targetField] || "",
 					type: this.constructor.TYPE,
 					code: targetField,
 					data: values
-				});
+				};
 
-				result.defaultFiltersValues.push({
+				result.defaultFiltersValues[targetField] = {
 					code: targetField,
 					type: this.constructor.TYPE,
 					value: this._getDefaultValue(values) || []
-				});
+				};
 			}
 		});
 

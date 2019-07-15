@@ -75,12 +75,12 @@ class CFilterBuilder {
 	/**
 	 * Генерация фильтра
 	 * @param data - билеты для обработки
-	 * @returns {{defaultFiltersValues: Array, filtersData: Array}}
+	 * @returns {{defaultFiltersValues: {}, filtersData: {}}}
 	 */
 	buildFilter(data = []) {
 		const result = {
-			filtersData: [],
-			defaultFiltersValues: [],
+			filtersData: {},
+			defaultFiltersValues: {},
 		};
 
 		if (!data || !data.length) {
@@ -90,8 +90,15 @@ class CFilterBuilder {
 		this.strategies.forEach((strategy) => {
 			const {filtersData, defaultFiltersValues} = strategy.processData(data);
 
-			result.filtersData.push(...filtersData);
-			result.defaultFiltersValues.push(...defaultFiltersValues);
+			result.filtersData = {
+				...result.filtersData,
+				...filtersData,
+			};
+
+			result.defaultFiltersValues = {
+				...result.defaultFiltersValues,
+				...defaultFiltersValues,
+			};
 		});
 
 		return result;

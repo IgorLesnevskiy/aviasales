@@ -45,13 +45,13 @@ function FilterSectionWrapper(props) {
 			innerItem = <FilterSectionCheckboxesList
 				data = {data}
 				type = {type}
-				// onSectionUpdate = {onSectionUpdate}
+				onSectionUpdate = {onSectionUpdate}
 			/>
 		} else  if (type === 'currencyChecker') {
 			innerItem = <FilterSectionCurrencyChecker
 				data = {data}
 				type = {type}
-				// onSectionUpdate = {onSectionUpdate}
+				onSectionUpdate = {onSectionUpdate}
 			/>
 		}
 
