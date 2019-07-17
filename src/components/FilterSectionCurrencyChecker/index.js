@@ -51,7 +51,6 @@ function FilterSectionCurrencyChecker(props) {
 		data
 	);
 
-
 	const onCurrencyCheckerGroupChange = useCallback((e) => {
 		const trigger = e.currentTarget;
 

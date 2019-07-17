@@ -1,4 +1,4 @@
-import React, {useCallback, useReducer} from "react";
+import React, {useCallback} from "react";
 import styles from './styles.module.scss';
 import FilterSectionWrapper from "../FilterSectionWrapper";
 
@@ -7,24 +7,6 @@ function Filter(props) {
 		onFilterUpdate = Function.prototype,
 		data = {}
 	} = props;
-
-	const [formData, dispatch] = useReducer((state, action) => {
-		switch (action.type) {
-			case "update":
-				{
-					const result = {
-						...state,
-						...action.data
-					};
-
-					onFilterUpdate(result);
-					return result;
-				}
-			default:
-				console.error('Unknown dispatch case');
-				break;
-		}
-	}, {});
 
 	const onSectionUpdate = useCallback(sectionData => {
 		const {
@@ -44,14 +26,11 @@ function Filter(props) {
 					.filter(i => i.isChecked && i.value !== 'all')
 					.map(i => i.value);
 
-				dispatch({
-					type: "update",
-					data: {
-						[code]: {
-							type,
-							code,
-							value: checkedValues
-						}
+				onFilterUpdate({
+					[code]: {
+						type,
+						code,
+						value: checkedValues
 					}
 				});
 

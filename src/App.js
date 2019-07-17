@@ -1,5 +1,6 @@
-import React, {useState, useCallback, useEffect, useMemo} from 'react';
+import React, {useCallback, useEffect, useReducer} from 'react';
 
+import {useDataApi} from './hooks';
 import Filter from './components/Filter';
 import TicketsList from './components/TicketsList';
 
@@ -13,10 +14,14 @@ import {utils, CFilterBuilder} from "./tools";
 
 library.add(fas);
 
-// TODO не нормализовать данные, считаем, что они ок
+// TODO определиться с тем, кто будет истончиком истины по данным фильтра
+// TODO нормализовать данные
+// TODO пустые данные при предзагрузки
 // TODO генерация иконочного шрифта
 // TODO при фильтрации билетов видно дергание цены в кнопке цены. Кнопка не перерисовывается, в ней просто заменяется цена, и это видно
 // TODO preloader фильтра и данных
+
+const fetchUrl = "https://raw.githubusercontent.com/KosyanMedia/test-tasks/master/aviasales/tickets.json";
 
 const defaultTicketsList = [
 	{
@@ -165,67 +170,122 @@ const defaultTicketsList = [
 const cFilterBuilder = new CFilterBuilder();
 const {filtersData, defaultFiltersValues} = cFilterBuilder.buildFilter(defaultTicketsList);
 
-function App() {
-	const [filterParams, setFilterParams] = useState(defaultFiltersValues);
-	const [isLoading, setLoadingStatus] = useState(true);
+function filterTickets(tickets = [], filterParams = {}) {
+	if (!tickets.length) {
+		return [];
+	}
 
-	const filteredTickets = useMemo((ticketsList = defaultTicketsList) => {
-		let filtered = [...ticketsList];
+	let filtered = [...tickets];
 
-		for (let paramName in filterParams) {
-			if (filterParams.hasOwnProperty(paramName)) {
-				const param = filterParams[paramName];
-				const {
-					code,
-					type,
-					value,
-				} = param;
+	for (let paramName in filterParams) {
+		if (filterParams.hasOwnProperty(paramName)) {
+			const param = filterParams[paramName];
+			const {
+				code,
+				type,
+				value,
+			} = param;
 
-				switch (type) {
-					case "currencyChecker":
-						filtered.forEach((ticket) => {
-							if (ticket[code]) {
-								ticket[code] = value;
-							}
-						});
+			switch (type) {
+				case "currencyChecker":
+					filtered.forEach((ticket) => {
+						if (ticket[code]) {
+							ticket[code] = value;
+						}
+					});
 
-						break;
-					case "checkboxesList":
-						filtered = filtered.filter((ticket) => {
-							if (!value || (Array.isArray(value) && !value.length)) {
-								return true;
-							}
+					break;
+				case "checkboxesList":
+					filtered = filtered.filter((ticket) => {
+						if (!value || (Array.isArray(value) && !value.length)) {
+							return true;
+						}
 
-							if (typeof ticket[code] === "undefined") {
-								return true;
-							}
+						if (typeof ticket[code] === "undefined") {
+							return true;
+						}
 
-							return (Array.isArray(value))
-								? value.some(i => String(i) === String(ticket[code]))
-								: String(value) === String(ticket[code]);
-						});
+						return (Array.isArray(value))
+							? value.some(i => String(i) === String(ticket[code]))
+							: String(value) === String(ticket[code]);
+					});
 
-						break;
-					default:
-						console.error('Unknown filter case');
-				}
+					break;
+				default:
+					console.error('Unknown filter case');
 			}
 		}
+	}
 
-		return filtered;
-	}, [filterParams]);
+	return filtered;
+}
+
+function App() {
+	const [loadedData, doFetch] = useDataApi(
+		fetchUrl,
+		{},
+	);
+
+	const [state, dispatch] = useReducer((currentState, action) => {
+		switch (action.type) {
+			case "FETCH_INIT":
+				return {
+					...currentState,
+					isLoading: true,
+				};
+			case "FETCH_SUCCESS":
+				const updatedTickets = [
+					...currentState.tickets,
+					...action.payload.tickets
+				];
+
+				return {
+					...currentState,
+					tickets: updatedTickets,
+					filteredTickets: filterTickets(updatedTickets, currentState.filterParams),
+					isLoading: false,
+				};
+			case "FILTER_UPDATE":
+				const updatedFilter = {
+					...currentState.filterParams,
+					...action.payload.filterParams
+				};
+
+				return {
+					...currentState,
+					filteredTickets: filterTickets(currentState.tickets, updatedFilter),
+					filterParams: updatedFilter
+				};
+			default:
+				console.error('Unknown reducer case');
+		}
+	}, {
+		isLoading: false,
+		tickets: [],
+		filteredTickets: [],
+		filterParams: defaultFiltersValues,
+	});
 
 	const onFilterUpdate = useCallback((filterParams) => {
-		setFilterParams((oldState) => {
-			return {
-				...oldState,
-				...filterParams
+		dispatch({
+			type: "FILTER_UPDATE",
+			payload: {
+				filterParams
 			}
 		});
 	}, []);
 
 	useEffect(() => {
-		setLoadingStatus(false);
+		dispatch({
+			type: "FETCH_SUCCESS",
+			payload: {
+				tickets: loadedData.data.tickets || []
+			}
+		});
+	}, [loadedData]);
+
+	useEffect(() => {
+		doFetch(fetchUrl);
 	}, []);
 
 	return (
@@ -248,8 +308,8 @@ function App() {
 
 						<div className={"layout__body"}>
 							<TicketsList
-								tickets={filteredTickets}
-								isLoading={isLoading}
+								tickets={state.filteredTickets}
+								isLoading={state.isLoading}
 							/>
 						</div>
 
