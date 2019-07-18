@@ -1,6 +1,7 @@
 import CCurrencyCheckerBuilder from "./_currencyCheckerBuilder.js";
 import CCheckboxesListBuilder from "./_checkboxesListBuilder.js";
-import {utils} from "../index";
+
+import {utils, availableCurrencies} from "../index";
 
 const titlesMap = {
 	stops: "Количество пересадок",
@@ -16,22 +17,6 @@ const targetFields ={
 		'priceCurrency'
 	],
 };
-
-// доступный список валют
-const availableCurrencies = [
-	{
-		title: 'RUB',
-		isDefault: false
-	},
-	{
-		title: 'USD',
-		isDefault: true
-	},
-	{
-		title: 'EUR',
-		isDefault: false
-	}
-];
 
 // генерация меток для типов полей
 const labelsGeneratorMap = {
@@ -63,7 +48,7 @@ class CFilterBuilder {
 				new CCurrencyCheckerBuilder({
 					titlesMap,
 					targetFields: targetFields.currencyChecker,
-					currencies: availableCurrencies,
+					currencies: availableCurrencies.currenciesList,
 					labelGenerator: labelsGeneratorMap,
 				}),
 			],
