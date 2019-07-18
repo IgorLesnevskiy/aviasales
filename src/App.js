@@ -1,174 +1,25 @@
 import React, {useCallback, useEffect, useReducer} from 'react';
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {fas} from '@fortawesome/free-solid-svg-icons'
 
 import {useDataApi} from './hooks';
 import Filter from './components/Filter';
 import TicketsList from './components/TicketsList';
+import {CFilterBuilder, availableCurrencies} from "./tools";
 
 import './App.scss';
-
 import logo from "./resources/images/logo.svg";
-
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {fas} from '@fortawesome/free-solid-svg-icons'
-import {utils, CFilterBuilder} from "./tools";
 
 library.add(fas);
 
-// TODO определиться с тем, кто будет истончиком истины по данным фильтра
-// TODO нормализовать данные
+const fetchUrl = "https://raw.githubusercontent.com/KosyanMedia/test-tasks/master/aviasales/tickets.json";
+const cFilterBuilder = new CFilterBuilder();
+
+// TODO вынести функциии обработки и фильтрации билетов в отдельный класс
+// TODO preloader фильтра и данных
 // TODO пустые данные при предзагрузки
 // TODO генерация иконочного шрифта
 // TODO при фильтрации билетов видно дергание цены в кнопке цены. Кнопка не перерисовывается, в ней просто заменяется цена, и это видно
-// TODO preloader фильтра и данных
-
-const fetchUrl = "https://raw.githubusercontent.com/KosyanMedia/test-tasks/master/aviasales/tickets.json";
-
-const defaultTicketsList = [
-	{
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "16:20",
-		"arrival_date": "12.05.18",
-		"arrival_time": "22:10",
-		"carrier": "TK",
-		"stops": 3,
-		"price": 12400,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}, {
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "17:20",
-		"arrival_date": "12.05.18",
-		"arrival_time": "23:50",
-		"carrier": "S7",
-		"stops": 1,
-		"price": 13100,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}, {
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "12:10",
-		"arrival_date": "12.05.18",
-		"arrival_time": "18:10",
-		"carrier": "SU",
-		"stops": 0,
-		"price": 15300,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}, {
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "17:00",
-		"arrival_date": "12.05.18",
-		"arrival_time": "23:30",
-		"carrier": "TK",
-		"stops": 2,
-		"price": 11000,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}, {
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "12:10",
-		"arrival_date": "12.05.18",
-		"arrival_time": "20:15",
-		"carrier": "BA",
-		"stops": 3,
-		"price": 13400,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}, {
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "9:40",
-		"arrival_date": "12.05.18",
-		"arrival_time": "19:25",
-		"carrier": "SU",
-		"stops": 3,
-		"price": 12450,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}, {
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "17:10",
-		"arrival_date": "12.05.18",
-		"arrival_time": "23:45",
-		"carrier": "TK",
-		"stops": 1,
-		"price": 13600,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}, {
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "6:10",
-		"arrival_date": "12.05.18",
-		"arrival_time": "15:25",
-		"carrier": "TK",
-		"stops": 0,
-		"price": 14250,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}, {
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "16:50",
-		"arrival_date": "12.05.18",
-		"arrival_time": "23:35",
-		"carrier": "SU",
-		"stops": 1,
-		"price": 16700,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}, {
-		"origin": "VVO",
-		"origin_name": "Владивосток",
-		"destination": "TLV",
-		"destination_name": "Тель-Авив",
-		"departure_date": "12.05.18",
-		"departure_time": "6:10",
-		"arrival_date": "12.05.18",
-		"arrival_time": "16:15",
-		"carrier": "S7",
-		"stops": 0,
-		"price": 17400,
-		"priceCurrency": "RUB",
-		"basePriceCurrency": "RUB",
-	}
-];
-
-const cFilterBuilder = new CFilterBuilder();
-const {filtersData, defaultFiltersValues} = cFilterBuilder.buildFilter(defaultTicketsList);
 
 function filterTickets(tickets = [], filterParams = {}) {
 	if (!tickets.length) {
@@ -220,6 +71,18 @@ function filterTickets(tickets = [], filterParams = {}) {
 	return filtered;
 }
 
+function processTickets(tickets) {
+	const currency = (availableCurrencies.default && availableCurrencies.default.title) || 'RUB';
+
+	return tickets.map(ticket => {
+		return {
+			...ticket,
+			priceCurrency: currency,
+			basePriceCurrency: currency,
+		}
+	})
+}
+
 function App() {
 	const [loadedData, doFetch] = useDataApi(
 		fetchUrl,
@@ -234,14 +97,22 @@ function App() {
 					isLoading: true,
 				};
 			case "FETCH_SUCCESS":
+				const processedTickets = processTickets(action.payload.tickets);
+
 				const updatedTickets = [
 					...currentState.tickets,
-					...action.payload.tickets
+					...processedTickets
 				];
+
+				const {filtersData, defaultFiltersValues} = cFilterBuilder.buildFilter(updatedTickets);
 
 				return {
 					...currentState,
 					tickets: updatedTickets,
+					filtersData,
+					filterParams: (currentState.tickets && currentState.tickets.length)
+						? currentState.filterParams
+						: defaultFiltersValues,
 					filteredTickets: filterTickets(updatedTickets, currentState.filterParams),
 					isLoading: false,
 				};
@@ -260,10 +131,11 @@ function App() {
 				console.error('Unknown reducer case');
 		}
 	}, {
-		isLoading: false,
 		tickets: [],
 		filteredTickets: [],
-		filterParams: defaultFiltersValues,
+		filterParams: {},
+		filtersData: {},
+		isLoading: false,
 	});
 
 	const onFilterUpdate = useCallback((filterParams) => {
@@ -302,7 +174,7 @@ function App() {
 						<div className={"layout__sidebar"}>
 							<Filter
 								onFilterUpdate={onFilterUpdate}
-								data={filtersData}
+								data={state.filtersData}
 							/>
 						</div>
 
