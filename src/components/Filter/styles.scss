@@ -8,4 +8,8 @@
 	&__section + &__section {
 		margin-top: 3rem;
 	}
+
+	&.theme--night-mode {
+		background: #1e3c53;
+	}
 }

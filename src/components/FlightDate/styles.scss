@@ -27,3 +27,10 @@
 		text-align: left;
 	}
 }
+
+.theme--night-mode {
+	.flight-date__time,
+	.flight-date__place {
+		color: #fff;
+	}
+}

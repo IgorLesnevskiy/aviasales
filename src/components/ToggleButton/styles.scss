@@ -1,0 +1,62 @@
+$toggle--base-width: 50px;
+$toggle--base-height: $toggle--base-width * 0.6;
+
+$toggle--width: $toggle--base-width + 2;
+$toggle--height: $toggle--base-height + 2;
+$toggle--border-radius: $toggle--base-height * 2;
+$toggle--indicator-size: $toggle--base-height - 2;
+$toggle--indicator-on-position: $toggle--base-width * 0.5 - 1;
+
+.toggle-button {
+	width: $toggle--width;
+	height: $toggle--height;
+	display: inline-block;
+	border: 1px solid #e4e4e4;
+	border-radius: $toggle--border-radius;
+	cursor: pointer;
+	position: relative;
+
+	&__checkbox {
+		display: none;
+	}
+
+	&__indicator-wrapper {
+		position: relative;
+		border-radius: $toggle--border-radius;
+		width: 100%;
+		height: 100%;
+		transition: background-color 0.2s ease-in-out;
+	}
+
+	&__indicator {
+		width: $toggle--indicator-size;
+		height: $toggle--indicator-size;
+		border-radius: $toggle--border-radius;
+		position: absolute;
+		display: block;
+		box-shadow:
+				0 0 0 1px hsla(0, 0%, 0%, 0.1),
+				0 4px 0 0 hsla(0, 0%, 0%, 0.04),
+				0 4px 9px hsla(0, 0%, 0%, 0.13),
+				0 3px 3px hsla(0, 0%, 0%, 0.05);
+		transition: 0.2s ease-in-out;
+		background: whitesmoke;
+		left: 1px;
+		top: 1px;
+	}
+
+	&__indicator-icon {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	&__checkbox:checked + &__indicator-wrapper {
+		background: #2ecc71;
+	}
+
+	&__checkbox:checked + &__indicator-wrapper &__indicator {
+		left: $toggle--indicator-on-position;
+	}
+}
