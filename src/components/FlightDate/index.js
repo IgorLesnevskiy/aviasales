@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from "react";
 import Skeleton  from "react-loading-skeleton";
 import cn from "classnames";
+
 import {utils} from '../../tools';
-import styles from './styles.module.scss';
+
+import "./styles.scss";
 
 const fullDateFormat = 'DD MMM YYYY, dd';
 
@@ -21,8 +23,10 @@ function FlightDate(props) {
 		: [city, cityCode].filter(Boolean).join(', ');
 
 	const fdClasses = cn([
-		styles["flight-date"],
-		direction === 'from' ? styles["flight-date--from"] : styles["flight-date--to"]
+		"flight-date",
+		direction === 'from'
+			? "flight-date--from"
+			: "flight-date--to"
 	]);
 
 	const [convertedDate, updateDate] = useState();
@@ -37,10 +41,19 @@ function FlightDate(props) {
 
 	return (
 		<div className={fdClasses}>
-			<div className={styles["flight-date__time"]}>{!isLoading ? time : <Skeleton count={1} width={80}/>}</div>
-			<div className={styles["flight-date__place"]}>{!isLoading ? combinedCityCode : <Skeleton count={1} />}</div>
-			<div className={styles["flight-date__date"]}>
-				{!isLoading && convertedDate ? convertedDate : <Skeleton count={1} />}
+			<div className={"flight-date__time"}>{!isLoading
+				? time
+				: <Skeleton count={1} width={80}/>
+			}</div>
+			<div className={"flight-date__place"}>{!isLoading
+				? combinedCityCode
+				: <Skeleton count={1} />
+			}</div>
+			<div className={"flight-date__date"}>
+				{!isLoading && convertedDate
+					? convertedDate
+					: <Skeleton count={1} />
+				}
 			</div>
 		</div>
 	)

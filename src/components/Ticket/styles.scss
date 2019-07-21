@@ -5,6 +5,8 @@
 	display: flex;
 	align-items: stretch;
 
+	transition: background-color 0.2s ease-in-out;
+
 	&__action-wrapper {
 		flex-shrink: 0;
 		width: 20rem;
@@ -58,4 +60,8 @@
 		left: 50%;
 		transform: translateX(-50%);
 	}
+}
+
+.theme--night-mode .ticket {
+	background: #1e3c53;
 }

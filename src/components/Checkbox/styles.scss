@@ -2,6 +2,7 @@
 	display: inline-flex;
 	align-items: center;
 	cursor: pointer;
+	padding: 0.5rem 0;
 
 	&__box {
 		color: #2196F3;
@@ -33,5 +34,11 @@
 
 	&__label {
 		margin-left: 1.1rem;
+	}
+}
+
+.theme--night-mode {
+	.checkbox__box {
+		color: #fff;
 	}
 }

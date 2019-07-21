@@ -12,6 +12,7 @@
 	}
 
 	&__checkbox-wrapper {
+		display: flex;
 		font-size: 1.3rem;
 		flex-grow: 1;
 
@@ -46,5 +47,15 @@
 			opacity: 1;
 			transform: translateY(0%);
 		}
+	}
+}
+
+.theme--night-mode {
+	.checkbox-line:hover {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+
+	.checkbox-line__action {
+		color: #fff;
 	}
 }

@@ -1,5 +1,7 @@
 import React from "react";
 
+import {NightModeContext} from "../../context/";
+
 import FlightDate from "../FlightDate";
 import TransferIndicator from "../TransferIndicator";
 import PriceButton from "../PriceButton";

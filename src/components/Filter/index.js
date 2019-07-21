@@ -1,6 +1,8 @@
 import React, {useCallback} from "react";
-import styles from './styles.module.scss';
+
 import FilterSectionWrapper from "../FilterSectionWrapper";
+
+import './styles.scss';
 
 function Filter(props) {
 	const {
@@ -48,7 +50,7 @@ function Filter(props) {
 
 			sections.push(
 				<React.Fragment key={paramName}>
-					<div className={styles.filter__section}>
+					<div className={"filter__section"}>
 						<FilterSectionWrapper
 							{...sectionData}
 							onSectionUpdate={onSectionUpdate}
@@ -60,7 +62,7 @@ function Filter(props) {
 	}
 
 	return (
-		<form className={styles.filter}>
+		<form className={"filter"}>
 			{sections}
 		</form>
 	)

@@ -59,7 +59,10 @@ function FilterSectionWrapper(props) {
 			<React.Fragment>
 				<div className={"filter-section-wrapper"}>
 					<div className={"filter-section-wrapper__title"}>{state.isLoading ? <Skeleton/> : title}</div>
-					<div className={cn("filter-section-wrapper__body", state.isLoading ? "skeleton" : null)}>
+					<div className={cn(
+						"filter-section-wrapper__body",
+						state.isLoading && "skeleton"
+					)}>
 						{state.isLoading ? <Skeleton count={4} /> : innerItem}
 					</div>
 				</div>

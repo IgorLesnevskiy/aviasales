@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {utils} from '../../tools';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,6 +16,15 @@ function Checkbox(props) {
 	} = props;
 
 	const [uniqId] = useState(id || utils.getUniqueId());
+	const [checkboxValue, setChecked] = useState(isChecked);
+
+	const handleInputChange = useCallback(
+		(event) => {
+			setChecked(event.target.checked);
+			onChange(event);
+		},
+		[onChange],
+	);
 
 	return (
 		<label className={"checkbox"}>
@@ -24,8 +33,8 @@ function Checkbox(props) {
 				       id={uniqId}
 				       name = {name}
 				       value = {value}
-				       onChange={onChange}
-				       checked={isChecked}
+				       onChange={handleInputChange}
+				       checked={checkboxValue}
 				/>
 				<FontAwesomeIcon icon={['fas', 'check']} className={"checkbox__tick"}/>
 			</div>

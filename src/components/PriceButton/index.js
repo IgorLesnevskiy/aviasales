@@ -1,10 +1,10 @@
 import React, { useReducer, useEffect, useCallback } from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import CurrencyViewer from '../CurrencyViewer';
 import {getPriceConverter} from "../../tools";
 
 import styles from './styles.module.scss';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const cPriceConverter = getPriceConverter();
 
