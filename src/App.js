@@ -7,7 +7,7 @@ import {useDataApi} from './hooks';
 import Filter from './components/Filter';
 import TicketsList from './components/TicketsList';
 import Toolbar from './components/Toolbar';
-import {CFilterBuilder, availableCurrencies} from "./tools";
+import {CFilterBuilder, CTicketsProcessor, availableCurrencies} from "./tools";
 import {NightModeContext} from "./context";
 
 import './App.scss';
@@ -18,74 +18,11 @@ library.add(fas);
 const fetchUrl = "https://raw.githubusercontent.com/KosyanMedia/test-tasks/master/aviasales/tickets.json";
 const cFilterBuilder = new CFilterBuilder();
 
-// TODO вынести функциии обработки и фильтрации билетов в отдельный класс
 // TODO вынести логотип в отдельный компонент
 // TODO preloader фильтра и данных
 // TODO пустые данные при предзагрузки
 // TODO генерация иконочного шрифта
 // TODO при фильтрации билетов видно дергание цены в кнопке цены. Кнопка не перерисовывается, в ней просто заменяется цена, и это видно
-
-function filterTickets(tickets = [], filterParams = {}) {
-	if (!tickets.length) {
-		return [];
-	}
-
-	let filtered = [...tickets];
-
-	for (let paramName in filterParams) {
-		if (filterParams.hasOwnProperty(paramName)) {
-			const param = filterParams[paramName];
-			const {
-				code,
-				type,
-				value,
-			} = param;
-
-			switch (type) {
-				case "currencyChecker":
-					filtered.forEach((ticket) => {
-						if (ticket[code]) {
-							ticket[code] = value;
-						}
-					});
-
-					break;
-				case "checkboxesList":
-					filtered = filtered.filter((ticket) => {
-						if (!value || (Array.isArray(value) && !value.length)) {
-							return true;
-						}
-
-						if (typeof ticket[code] === "undefined") {
-							return true;
-						}
-
-						return (Array.isArray(value))
-							? value.some(i => String(i) === String(ticket[code]))
-							: String(value) === String(ticket[code]);
-					});
-
-					break;
-				default:
-					console.error('Unknown filter case');
-			}
-		}
-	}
-
-	return filtered;
-}
-
-function processTickets(tickets) {
-	const currency = (availableCurrencies.default && availableCurrencies.default.title) || 'RUB';
-
-	return tickets.map(ticket => {
-		return {
-			...ticket,
-			priceCurrency: currency,
-			basePriceCurrency: currency,
-		}
-	})
-}
 
 function App() {
 	const [loadedData, doFetch] = useDataApi(
@@ -106,7 +43,7 @@ function App() {
 					isLoading: true,
 				};
 			case "FETCH_SUCCESS":
-				const processedTickets = processTickets(action.payload.tickets);
+				const processedTickets = CTicketsProcessor.processTickets(action.payload.tickets);
 
 				const updatedTickets = [
 					...currentState.tickets,
@@ -122,7 +59,7 @@ function App() {
 					filterParams: (currentState.tickets && currentState.tickets.length)
 						? currentState.filterParams
 						: defaultFiltersValues,
-					filteredTickets: filterTickets(updatedTickets, currentState.filterParams),
+					filteredTickets: CTicketsProcessor.filterTickets(updatedTickets, currentState.filterParams),
 					isLoading: false,
 				};
 			case "FILTER_UPDATE":
@@ -133,7 +70,7 @@ function App() {
 
 				return {
 					...currentState,
-					filteredTickets: filterTickets(currentState.tickets, updatedFilter),
+					filteredTickets: CTicketsProcessor.filterTickets(currentState.tickets, updatedFilter),
 					filterParams: updatedFilter
 				};
 			default:
@@ -177,11 +114,6 @@ function App() {
 		}
 	};
 
-	const pageClasses = cn({
-		page: true,
-		"theme--night-mode": state.nightMode
-	});
-
 	useEffect(() => {
 		dispatch({
 			type: "FETCH_SUCCESS",
@@ -196,7 +128,10 @@ function App() {
 	}, []);
 
 	return (
-		<div className={pageClasses}>
+		<div className={cn({
+			page: true,
+			"theme--night-mode": state.nightMode
+		})}>
 			<div className={"page__inner"}>
 				<div className={"page__logo"}>
 					<a href="https://aviasales.ru" target={"_blank"}>
@@ -207,7 +142,7 @@ function App() {
 					<div className={"layout"}>
 
 						<div className={"layout__toolbar"}>
-							<Toolbar items={toolbarItems}></Toolbar>
+							<Toolbar items={toolbarItems} />
 						</div>
 
 						<div className={"layout__content"}>
