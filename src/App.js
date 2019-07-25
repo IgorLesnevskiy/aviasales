@@ -19,6 +19,7 @@ const fetchUrl = "https://raw.githubusercontent.com/KosyanMedia/test-tasks/maste
 const cFilterBuilder = new CFilterBuilder();
 
 // TODO вынести логотип в отдельный компонент
+// TODO написать абстракцию для загрузки данных с удаленного сервера
 // TODO preloader фильтра и данных
 // TODO пустые данные при предзагрузки
 // TODO генерация иконочного шрифта

@@ -1,7 +1,25 @@
 import React, {useReducer, useCallback} from "react";
 import CheckboxLine from '../CheckboxLine';
 
+import {mapObjIndexed, map, values, mergeLeft, compose} from "ramda";
+
 import styles from './styles.module.scss';
+
+const itemsList = (item, key) => (
+	<div className={"filter-checkboxes-list__row"} key={key}>
+		<CheckboxLine
+			{...item}
+		/>
+	</div>
+);
+
+const extendItemsByExtraParams = (items, extra = {}) => map(item => mergeLeft(item, extra), items);
+
+const getItems = compose(
+	values,
+	mapObjIndexed(itemsList),
+	extendItemsByExtraParams
+);
 
 function FilterSectionCheckboxesList(props) {
 	const {
@@ -98,21 +116,11 @@ function FilterSectionCheckboxesList(props) {
 		}
 	},[]);
 
-	let rows = [];
-	for (let rowKey in values) {
-		rows.push(
-			<div className={styles["filter-checkboxes-list__row"]} key={rowKey}>
-				<CheckboxLine
-					{...values[rowKey]}
-					onChange = {onCheckboxesGroupChange}
-				/>
-			</div>
-		)
-	}
-
 	return (
 		<div className={styles["filter-checkboxes-list"]}>
-			{rows}
+			{getItems(values, {
+				onChange: onCheckboxesGroupChange,
+			})}
 		</div>
 	)
 }
