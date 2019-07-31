@@ -1,12 +1,26 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useLayoutEffect, useState} from "react";
+import {forEachObjIndexed} from "ramda";
 
 import FilterSectionWrapper from "../FilterSectionWrapper";
 
 import './styles.scss';
 
+const filterSection = ({key, sectionData}) => {
+	return (
+		<React.Fragment key={key}>
+			<div className={"filter__section"}>
+				<FilterSectionWrapper
+					{...sectionData}
+				/>
+			</div>
+		</React.Fragment>
+	);
+};
+
 function Filter(props) {
 	const {
 		onFilterUpdate = Function.prototype,
+		isLoading = true,
 		data = {}
 	} = props;
 
@@ -43,23 +57,38 @@ function Filter(props) {
 		}
 	}, [onFilterUpdate]);
 
-	const sections = [];
-	for (let paramName in data) {
-		if (data.hasOwnProperty(paramName)) {
-			const sectionData = data[paramName];
+	const [sections, updateSections] = useState([]);
 
-			sections.push(
-				<React.Fragment key={paramName}>
-					<div className={"filter__section"}>
-						<FilterSectionWrapper
-							{...sectionData}
-							onSectionUpdate={onSectionUpdate}
-						/>
-					</div>
-				</React.Fragment>
+	useLayoutEffect(() => {
+		const result = [];
+
+		if (isLoading) {
+			const sectionData = {
+				isLoading
+			};
+
+			result.push(
+				filterSection({
+					sectionData
+				})
 			)
+		} else {
+			forEachObjIndexed((item, key) => {
+				const sectionData = {
+					...item,
+					isLoading,
+					onSectionUpdate,
+				};
+
+				result.push(
+					filterSection({key, sectionData})
+				)
+			}, data);
 		}
-	}
+
+		updateSections(result);
+	}, [isLoading, data]);
+
 
 	return (
 		<form className={"filter"}>

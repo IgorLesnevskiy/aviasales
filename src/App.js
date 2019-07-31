@@ -7,7 +7,8 @@ import {useDataApi} from './hooks';
 import Filter from './components/Filter';
 import TicketsList from './components/TicketsList';
 import Toolbar from './components/Toolbar';
-import {CFilterBuilder, CTicketsProcessor, availableCurrencies} from "./tools";
+import Logo from './components/Logo';
+import {CFilterBuilder, CTicketsProcessor} from "./tools";
 import {NightModeContext} from "./context";
 
 import './App.scss';
@@ -15,13 +16,10 @@ import logo from "./resources/images/logo.svg";
 
 library.add(fas);
 
-const fetchUrl = "https://raw.githubusercontent.com/KosyanMedia/test-tasks/master/aviasales/tickets.json";
+const fetchUrl = "https://raw.githubusercontent.com/KosyanMedia/test-tasks/master/DEPRECATED_aviasales/tickets.json";
 const cFilterBuilder = new CFilterBuilder();
 
-// TODO вынести логотип в отдельный компонент
 // TODO написать абстракцию для загрузки данных с удаленного сервера
-// TODO preloader фильтра и данных
-// TODO пустые данные при предзагрузки
 // TODO генерация иконочного шрифта
 // TODO при фильтрации билетов видно дергание цены в кнопке цены. Кнопка не перерисовывается, в ней просто заменяется цена, и это видно
 
@@ -63,6 +61,11 @@ function App() {
 					filteredTickets: CTicketsProcessor.filterTickets(updatedTickets, currentState.filterParams),
 					isLoading: false,
 				};
+			case "FETCH_FAILURE":
+				return {
+					...currentState,
+					isError: true,
+				};
 			case "FILTER_UPDATE":
 				const updatedFilter = {
 					...currentState.filterParams,
@@ -83,7 +86,8 @@ function App() {
 		filteredTickets: [],
 		filterParams: {},
 		filtersData: {},
-		isLoading: false,
+		isLoading: true,
+		isError: false,
 	});
 
 	const onFilterUpdate = useCallback((filterParams) => {
@@ -116,12 +120,24 @@ function App() {
 	};
 
 	useEffect(() => {
-		dispatch({
-			type: "FETCH_SUCCESS",
-			payload: {
-				tickets: loadedData.data.tickets || []
+		if (loadedData.isFetched) {
+
+			if (loadedData.isError) {
+				dispatch({
+					type: "FETCH_FAILURE",
+					payload: {
+						tickets: loadedData.data.tickets || []
+					}
+				});
+			} else {
+				dispatch({
+					type: "FETCH_SUCCESS",
+					payload: {
+						tickets: loadedData.data.tickets || []
+					}
+				});
 			}
-		});
+		}
 	}, [loadedData]);
 
 	useEffect(() => {
@@ -135,9 +151,12 @@ function App() {
 		})}>
 			<div className={"page__inner"}>
 				<div className={"page__logo"}>
-					<a href="https://aviasales.ru" target={"_blank"}>
-						<img src={logo} alt={"Aviasales"} title={"Aviasales"}/>
-					</a>
+					<Logo
+						url={"https://aviasales.ru"}
+						imageSrc={logo}
+						alt={"Aviasales"}
+						title={"Aviasales"}
+					/>
 				</div>
 				<div className={"page__content"}>
 					<div className={"layout"}>
@@ -153,14 +172,17 @@ function App() {
 									<Filter
 										onFilterUpdate={onFilterUpdate}
 										data={state.filtersData}
+										isLoading={state.isLoading}
 									/>
 								</div>
 
 								<div className={"layout__body"}>
-									<TicketsList
-										tickets={state.filteredTickets}
-										isLoading={state.isLoading}
-									/>
+									{state.isError
+										? "Ошибка загрузки данных"
+										: <TicketsList
+											tickets={state.filteredTickets}
+											isLoading={state.isLoading}
+										/>}
 								</div>
 
 							</NightModeContext.Provider>
